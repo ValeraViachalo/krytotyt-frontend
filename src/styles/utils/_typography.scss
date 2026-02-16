@@ -1,0 +1,58 @@
+@import "./mixins";
+
+%h1 {
+  font-family: var(--font-neue-haas-display), sans-serif;
+  font-size: 2.8vw;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 142%;
+  text-transform: uppercase;
+  letter-spacing: normal;
+}
+
+%body-text {
+  font-family: var(--font-neue-haas-display), sans-serif;
+  font-size: 1.5vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.01vw;
+}
+
+%link {
+  @extend %body-text;
+}
+
+.body {
+  @extend %body-text;
+
+  h1 {
+    @extend %h1;
+  }
+
+  a {
+    @extend %link;
+  }
+
+  .super-text {
+    font-family: var(--font-neue-haas-display), sans-serif;
+    font-size: 4.7vw;
+    font-style: bold;
+    line-height: 90%;
+    text-transform: uppercase;
+    letter-spacing: normal;
+  }
+
+  .small-text {
+    font-family: var(--font-neue-haas-display), sans-serif;
+    font-size: 1vw;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: -0.03vw;
+  }
+
+  .bold {
+    font-weight: 700;
+  }
+}

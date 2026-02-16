@@ -1,0 +1,21 @@
+.home {
+  .hero {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &__bg {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      object-position: 50% 25%;
+    }
+
+    &__title {
+      color: $c-white;
+    }
+  }
+}

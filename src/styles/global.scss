@@ -1,0 +1,26 @@
+@import "./utils/typography";
+@import "./utils/mixins";
+@import "./utils/variables";
+@import "./utils/scaling";
+
+.body {
+  background-color: $c-white;
+  color: $c-black;
+  max-width: 100vw;
+  overflow-x: hidden;
+  ::selection {
+    color: $g-70;
+    background: $c-white;
+  }
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+  max-width: calc(var(--size-container) - EM(24)); // 20px each
+}
+
+.shadow {
+  color: $g-70;
+}

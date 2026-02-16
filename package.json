@@ -1,0 +1,19 @@
+{
+  "name": "retrats-next-srr-2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "framer-motion": "^12.0.0",
+    "lenis": "^1.1.18",
+    "next": "15.2.8",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sass": "^1.82.0"
+  }
+}
