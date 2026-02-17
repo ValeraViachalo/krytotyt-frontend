@@ -1,19 +1,15 @@
 export const defaultMetadata = {
-  title: "RETRATS TEMPLATE",
+  title: "KRYTOTYT",
   description:
-    "the ideal template for creative work, featuring stunning components and fluid functionality on nextjs.",
+    "this is a description for KRYTOTYT",
   keywords: [
     "nextjs",
-    "next.js",
-    "creative",
-    "creative development",
-    "framer-motion",
   ],
   openGraph: {
-    title: "RETRATS TEMPLATE",
+    title: "KRYTOTYT",
     description: "",
     url: "",
-    siteName: "RETRATS TEMPLATE",
+    siteName: "KRYTOTYT",
     images: [
       {
         url: "/assets/screenshot.png",

@@ -1,7 +1,7 @@
 /* Desktop */
 :root {
   --size-unit: 16; /* body font-size in design - no px */
-  --size-container-ideal: 1440; /* screen-size in design - no px */
+  --size-container-ideal: 1728; /* screen-size in design - no px */
   --size-container-min: 992px;
   --size-container-max: 1920px;
   --size-container: clamp(var(--size-container-min), 100vw, var(--size-container-max));
@@ -30,7 +30,7 @@
 @media screen and (max-width: 479px) {
   :root {
     --size-unit: 14;
-    --size-container-ideal: 375; /* screen-size in design - no px */
+    --size-container-ideal: 390; /* screen-size in design - no px */
     --size-container-min: 320px;
     --size-container-max: 479px;
   }

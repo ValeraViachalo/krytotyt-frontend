@@ -1,19 +1,19 @@
 @import "./variables";
 
-@mixin mq($size: $tablet, $type: '<', $size-next: null) {
-  @if ($type == '<') {
+@mixin mq($size: $tablet, $type: 'max', $size-next: null) {
+  @if ($type == 'max') {
     @media (max-width: #{$size}px) {
       @content;
     }
   }
 
-  @if ($type == '>') {
+  @if ($type == 'min') {
     @media (min-width: #{$size}px) {
       @content;
     }
   }
 
-  @if ($type == '<>') {
+  @if ($type == 'min-max') {
     @media screen and (min-width: #{$size}px) and (max-width: #{$size-next}px) {
       @content;
     }

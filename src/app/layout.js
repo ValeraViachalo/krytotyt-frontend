@@ -8,17 +8,12 @@ import { defaultMetadata } from "@/lib/helpers/defaultMetadata";
 const neueHaasDisplay = localFont({
   src: [
     {
-      path: "./fonts/NeueHaasDisplay/NeueHaasDisplayBold.ttf",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "./fonts/NeueHaasDisplay/NeueHaasDisplayRoman.ttf",
+      path: "./fonts/KTFPrima-Regular.otf",
       weight: "400",
       style: "normal",
     },
   ],
-  variable: "--font-neue-haas-display",
+  variable: "--font-ktf-prima",
 });
 
 export const metadata = defaultMetadata;
@@ -28,9 +23,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className="html">
       <body className={`${neueHaasDisplay.variable} body`}>
         <ScrollProvider scrollBar></ScrollProvider>
-        <Header />
         {children}
-        <Footer />
       </body>
     </html>
   );

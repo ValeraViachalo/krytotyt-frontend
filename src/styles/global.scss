@@ -4,23 +4,63 @@
 @import "./utils/scaling";
 
 .body {
-  background-color: $c-white;
-  color: $c-black;
   max-width: 100vw;
   overflow-x: hidden;
+  background-color: $c-black;
+  color: $c-white;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+
   ::selection {
     color: $g-70;
     background: $c-white;
   }
+
+  &:has(.page--white) {
+    background-color: $c-white;
+    color: $c-black;
+
+    ::selection {
+      color: $g-70;
+      background: $c-black;
+    }
+  }
 }
 
 .container {
+  max-width: var(--size-container);
   margin-right: auto;
   margin-left: auto;
   width: 100%;
-  max-width: calc(var(--size-container) - EM(24)); // 20px each
 }
 
 .shadow {
-  color: $g-70;
+  // color: $g-70;
+  opacity: 0.4;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: EM(10);
+  padding: EM(16) EM(26);
+  border-radius: EM(40);
+  background: rgba(49, 49, 49, 0.5);
+  backdrop-filter: blur(1em);
+
+  transition: background-color 0.3s ease;
+
+  @include hover {
+    background: rgba(104, 104, 104, 0.5);
+  }
+
+  &__icon {
+    width: 1em;
+    height: 1em;
+  }
+
+  &__text {
+    line-height: 1;
+  }
 }

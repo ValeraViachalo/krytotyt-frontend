@@ -1,0 +1,231 @@
+.about-page {
+  .sections {
+    &-content {
+      width: 100%;
+      max-width: EM(1022);
+      margin: 0 auto EM(130);
+      text-align: center;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: EM(170);
+
+      @include mq() {
+        gap: EM(76);
+        margin: 0 auto EM(30);
+      }
+    }
+
+    .about {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: EM(80);
+      margin: EM(-80) auto 0;
+      max-width: EM(720);
+
+      @include mq() {
+        margin: EM(80) auto 0;
+        gap: EM(48);
+      }
+
+      &__text {
+        padding: 0 EM(60);
+
+        @include mq() {
+          padding: 0;
+          max-width: calc(100% - EM(120));
+        }
+      }
+    }
+
+    .services {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+
+      width: 100%;
+
+      .top {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: EM(80);
+        text-align: center;
+
+        @include mq() {
+          gap: EM(48);
+          max-width: calc(100% - EM(120));
+        }
+      }
+
+      .list {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
+
+        margin-top: EM(65);
+
+        @include mq() {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          align-items: start;
+          gap: EM(24);
+          width: calc(100% - EM(48)); // compensate for grid gap
+        }
+
+        &-row {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          padding: EM(15) 0;
+          gap: EM(214);
+
+          @include mq() {
+            display: contents;
+            width: auto;
+            padding: 0;
+            gap: 0;
+            justify-content: initial;
+          }
+        }
+
+        // Mobile: if the last row has a single item, make it span 2 columns
+        @include mq() {
+          .list-row:last-child > .item:only-child {
+            grid-column: 1 / -1;
+          }
+        }
+
+        .item {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          width: EM(198);
+          // height: EM(135);
+
+          position: relative;
+
+          @include mq() {
+            gap: EM(16);
+            font-size: EM(14);
+            width: 100%; // full width of grid cell
+          }
+
+          &__icon {
+            width: EM(30);
+            height: EM(26);
+            position: absolute;
+            top: EM(-8);
+            left: 50%;
+            transform: translate(-50%, -100%);
+
+            @include mq() {
+              position: relative;
+              top: 0;
+              left: 0;
+              transform: none;
+            }
+          }
+
+          &__text {
+            @include mq() {
+              width: EM(165);
+            }
+          }
+        }
+      }
+
+      &__button {
+        margin-top: EM(80);
+
+        @include mq() {
+          margin-top: EM(36);
+        }
+      }
+    }
+
+    .how-it-works {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      gap: EM(80);
+
+      .top {
+        max-width: EM(620);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: EM(80);
+
+        @include mq() {
+          max-width: calc(100% - EM(120));
+          gap: EM(48);
+        }
+      }
+
+      .list {
+        display: flex;
+        align-items: flex-end;
+        gap: EM(33);
+
+        @include mq() {
+          flex-direction: column;
+          align-items: center;
+          gap: EM(16);
+        }
+
+        .item {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          gap: EM(14);
+
+          &__icon {
+            width: EM(33);
+            height: EM(33);
+          }
+        }
+
+        .arrow {
+          width: EM(13);
+          height: EM(15);
+
+          @include mq() {
+            rotate: 90deg;
+          }
+        }
+      }
+
+      .bottom {
+        max-width: EM(620);
+
+        @include mq() {
+          max-width: calc(100% - EM(120));
+        }
+      }
+    }
+
+    .about-footer {
+      max-width: EM(620);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: EM(80);
+
+      @include mq() {
+        gap: EM(48);
+        max-width: calc(100% - EM(120));
+      }
+
+      &__icon {
+        width: EM(250);
+        height: EM(250);
+      }
+    }
+  }
+}
