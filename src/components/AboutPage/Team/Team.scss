@@ -5,7 +5,6 @@
     align-items: center;
     justify-content: center;
     height: clamp(EM(800), 100svh, EM(1000));
-    // max-height: EM(1000);
 
     @include mq() {
       height: auto;

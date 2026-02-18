@@ -147,7 +147,7 @@
       width: EM(21);
       height: EM(21);
       opacity: 0.3;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, filter 0.3s ease;
 
       @include hover {
         opacity: 1;
@@ -160,6 +160,8 @@
     }
 
     .menu {
+      color: $c-white;
+
       position: absolute;
       top: calc(100% + EM(15));
       right: 0;
@@ -544,14 +546,22 @@
 
 .body {
   &:has(.page--white) {
-    .header .left {
-      .logo-wrapper .logo {
-        filter: invert(0);
+    .header {
+      .left {
+        .logo-wrapper .logo {
+          filter: invert(0);
+        }
+
+        .header-menu-button {
+          .line {
+            background-color: $c-black;
+          }
+        }
       }
 
-      .header-menu-button {
-        .line {
-          background-color: $c-black;
+      .right {
+        .header-button {
+          filter: invert(1);
         }
       }
     }

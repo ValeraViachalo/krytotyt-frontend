@@ -1,0 +1,25 @@
+.case-catalog {
+  .catalog-list {
+    padding: EM(150) 0;
+    max-width: calc(100% - EM(80));
+
+    display: grid;
+    grid-template-columns: repeat(6, EM(137));
+    justify-content: space-between;
+    row-gap: EM(40);
+
+    .catalog-item {
+      width: EM(137);
+
+      display: flex;
+      flex-direction: column;
+      gap: EM(4);
+      opacity: 1;
+      transition: opacity 0.3s ease;
+
+      &--highlighted {
+        opacity: 0.1;
+      }
+    }
+  }
+}

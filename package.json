@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sanity/block-content-to-react": "^3.0.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.0.0",
     "lenis": "^1.1.18",
     "next": "15.2.8",
+    "next-sanity": "^12.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sass": "^1.82.0"
