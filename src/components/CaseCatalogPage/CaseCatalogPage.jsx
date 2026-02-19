@@ -4,7 +4,7 @@ import CatalogList from './CatalogList/CatalogList'
 export default function CaseCatalogPage({ data }) {
   return (
     <main className="case-catalog page--white">
-      <CatalogList data={data?.list} />
+      <CatalogList data={data} />
     </main>
   )
 }

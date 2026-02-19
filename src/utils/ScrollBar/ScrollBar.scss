@@ -12,6 +12,10 @@
       width: .6vw;
     }
   }
+
+  @media (hover: none) {
+    display: none;
+  }
   
   &__bar {
     position: absolute;

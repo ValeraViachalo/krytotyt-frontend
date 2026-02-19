@@ -5,7 +5,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.cosmos.so',
+        hostname: 'cdn.sanity.io',
         port: '',
         // pathname: '/account123/**',
       },

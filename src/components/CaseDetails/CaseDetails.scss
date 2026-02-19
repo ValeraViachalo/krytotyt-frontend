@@ -1,0 +1,14 @@
+.case-details {
+  padding-bottom: EM(56);
+
+  &__button {
+    margin-top: EM(154);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include mq() {
+      margin-top: EM(136);
+    }
+  }
+}

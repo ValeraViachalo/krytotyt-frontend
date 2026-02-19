@@ -4,12 +4,16 @@ export const QUERY_CASES_CATALOG = `
     _id,
     "name": coalesce(name[$lang], name.ua),
     "slug": slug.current,
+    "projectType":{
+      "name": coalesce(projectType->name[$lang], projectType->name.ua),
+      "slug": projectType->slug.current
+    },
     images[]{
       "imageUrl": image.asset->url,
       showForCatalog
     }[showForCatalog == true]
   },
-  "projectType": *[_type == "projectType"]{
+  "projectTypes": *[_type == "projectType"]{
     _id,
     "name": coalesce(name[$lang], name.ua),
     "slug": slug.current

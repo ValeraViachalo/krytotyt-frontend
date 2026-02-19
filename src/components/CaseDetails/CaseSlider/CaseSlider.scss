@@ -1,7 +1,5 @@
 .case-details {
   .case-slider {
-    height: clamp(EM(800), 100svh, EM(1000));
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -10,16 +8,40 @@
 
     position: relative;
 
+    @include mq() {
+      gap: EM(40);
+      margin-top: EM(80);
+    }
+
     &-scroll {
       overflow: hidden;
       max-width: calc(100% - EM(120));
+
+      @include mq() {
+        padding: 0 EM(60);
+      }
+
+      /* allow JS to handle horizontal swipes while preserving vertical scroll */
+      touch-action: pan-y;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     &-list {
       display: flex;
       align-items: center;
       width: max-content;
-      transition: transform 0.7s $ease-out-expo;
+      transition: transform 1s $ease-in-out-quint;
+      will-change: transform;
+
+      &.dragging {
+        transition: none !important;
+      }
+
+      /* prevent accidental text selection while dragging */
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
     }
 
     &-item {
@@ -32,6 +54,12 @@
         width: 100%;
         height: auto;
         object-fit: cover;
+
+        /* prevent native image dragging */
+        -webkit-user-drag: none;
+        user-drag: none;
+        user-select: none;
+        -webkit-touch-callout: none;
       }
     }
 
@@ -39,11 +67,6 @@
       display: flex;
       align-items: center;
       gap: EM(5);
-
-      position: absolute;
-      bottom: EM(120);
-      left: 50%;
-      transform: translateX(-50%);
 
       .arrow {
         width: EM(48);
@@ -55,10 +78,25 @@
           opacity: 0.8;
         }
 
-        svg {
+        &--prev {
+          transform: rotate(180deg);
+        }
+
+        &__icon {
           width: 100%;
           height: 100%;
         }
+      }
+    }
+
+    /* show grab cursor on desktop for draggable feel */
+    @media (hover: hover) {
+      .case-slider-scroll {
+        cursor: grab;
+      }
+
+      .case-slider-scroll:active {
+        cursor: grabbing;
       }
     }
   }

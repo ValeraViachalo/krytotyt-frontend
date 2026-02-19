@@ -24,6 +24,10 @@
 
       text-align: center;
 
+      @include mq() {
+        gap: EM(48);
+      }
+
       .services-list {
         display: flex;
         align-items: center;
@@ -31,6 +35,11 @@
         gap: EM(40);
         margin-top: EM(36);
         flex-wrap: wrap;
+        
+        @include mq() {
+          margin-top: EM(32);
+          gap: EM(12);
+        }
 
         .service {
           display: flex;
