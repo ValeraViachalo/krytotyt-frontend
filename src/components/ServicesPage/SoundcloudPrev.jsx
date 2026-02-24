@@ -2,15 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// Uses the SoundCloud Widget iFrame API + oEmbed for playlist metadata/cover image
-// Widget API docs: https://developers.soundcloud.com/docs/api/html5-widget
-// oEmbed API docs: https://developers.soundcloud.com/docs/oembed
-
 const SOUNDCLOUD_WIDGET_URL = "https://w.soundcloud.com/player/";
 
 export default function SoundCloudPlayer() {
-  const [playlistUrl, setPlaylistUrl] = useState("");
-  const [inputUrl, setInputUrl] = useState("");
+  const [playlistUrl, setPlaylistUrl] = useState();
+  const [inputUrl, setInputUrl] = useState("https://soundcloud.com/krytotytmusic/sota-minimization-mix");
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(null);
@@ -138,7 +134,10 @@ export default function SoundCloudPlayer() {
   // Re-init widget whenever iframe src changes
   useEffect(() => {
     if (!playlistUrl || !isApiReady) return;
-    const timer = setTimeout(() => initWidget(), 800);
+    const timer = setTimeout(() => {
+      handleLoad();
+      initWidget()
+  }, 800);
     return () => clearTimeout(timer);
   }, [playlistUrl, isApiReady, initWidget]);
 
@@ -177,9 +176,6 @@ export default function SoundCloudPlayer() {
 
   return (
     <>
-
-<iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2247330206&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style={{fontSize: "10px", color: "#cccccc",lineBreak: "anywhere",wordBreak: "normal",overflow: "hidden",whiteSpace: "nowrap",textOverflow: "ellipsis", fontFamily: "Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif",fontWeight: 100}}><a href="https://soundcloud.com/krytotytmusic" title="KRYTOTYT" target="_blank" style={{color: "#cccccc", textDecoration: "none"}}>KRYTOTYT</a> · <a href="https://soundcloud.com/krytotytmusic/sota-minimization-mix" title="SOTA ☽ MINIMIZATION MIX" target="_blank" style={{color: "#cccccc", textDecoration: "none"}}>SOTA ☽ MINIMIZATION MIX</a></div>
-
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap');
 
@@ -596,7 +592,7 @@ export default function SoundCloudPlayer() {
             {playlistUrl && (
               <iframe
                 ref={iframeRef}
-                className="sc-iframe"
+                className="sc-ifram"
                 title="SoundCloud Widget"
                 src={buildEmbedUrl(playlistUrl)}
                 allow="autoplay"

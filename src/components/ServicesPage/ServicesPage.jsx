@@ -4,7 +4,7 @@ import SoundCloudPrev from './SoundcloudPrev'
 
 export default function ServicesPage() {
   return (
-   <></>
+   <SoundCloudPrev />
   )
 }
 
