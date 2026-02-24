@@ -5,7 +5,7 @@ import { useAudio } from "@/utils/AudioContext";
 import "./SoundcloudPlayer.scss";
 
 const SOUNDCLOUD_WIDGET_URL = "https://w.soundcloud.com/player/";
-const URL_PLAYLIST = "https://soundcloud.com/krytotytmusic/";
+const URL_PLAYLIST = "https://soundcloud.com/krytotytmusic";
 
 function normalizeTitle(title) {
   if (!title) return "";
@@ -24,6 +24,7 @@ export default function SoundcloudPlayer() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
   // Widget state
+  const [isMounted, setIsMounted] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -35,6 +36,9 @@ export default function SoundcloudPlayer() {
   const widgetRef = useRef(null);
   const progressInterval = useRef(null);
   const scriptRef = useRef(null);
+
+  // ── Render iframe only after mount ────────────────────────────────────────
+  useEffect(() => { setIsMounted(true); }, []);
 
   // ── Fetch playlist metadata from our secure API route ──────────────────────
   useEffect(() => {
@@ -95,6 +99,8 @@ export default function SoundcloudPlayer() {
       widget.getCurrentSoundIndex((idx) => {
         setCurrentTrackIndex(idx ?? 0);
       });
+      // Clear any existing interval before starting a new one
+      clearInterval(progressInterval.current);
       progressInterval.current = setInterval(() => {
         widget.getPosition((pos) => setPosition(pos));
         widget.getDuration((dur) => setDuration(dur));
@@ -192,14 +198,16 @@ export default function SoundcloudPlayer() {
         </a>
 
         {/* Hidden iframe — SoundCloud Widget API binds to this for playback */}
-        <iframe
-          ref={iframeRef}
-          // className="sc-iframe"
-          title="SoundCloud Widget"
-          src={buildEmbedUrl(playlistUrl)}
-          allow="autoplay"
-          // style={{ display: "none" }}
-        />
+        {isMounted && (
+          <iframe
+            ref={iframeRef}
+            className="sc-ifram"
+            title="SoundCloud Widget"
+            src={buildEmbedUrl(playlistUrl)}
+            allow="autoplay"
+            // style={{ display: "none" }}
+          />
+        )}
       </div>
     </div>
   );

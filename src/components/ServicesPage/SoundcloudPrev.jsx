@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 const SOUNDCLOUD_WIDGET_URL = "https://w.soundcloud.com/player/";
+const SOUNDCLOUD_PLAYLIST_URL = "https://soundcloud.com/krytotytmusic";
 
 export default function SoundCloudPlayer() {
-  const [playlistUrl, setPlaylistUrl] = useState();
-  const [inputUrl, setInputUrl] = useState("https://soundcloud.com/krytotytmusic/sota-minimization-mix");
+  const playlistUrl = SOUNDCLOUD_PLAYLIST_URL;
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(null);
@@ -18,6 +18,7 @@ export default function SoundCloudPlayer() {
   const [isLooping, setIsLooping] = useState(true);
   const [error, setError] = useState("");
   const [isApiReady, setIsApiReady] = useState(false);
+  const [isMetaRequested, setIsMetaRequested] = useState(false);
   // Playlist metadata fetched from SoundCloud oEmbed (cover image, title, author)
   const [playlistMeta, setPlaylistMeta] = useState(null);
   const [isFetchingMeta, setIsFetchingMeta] = useState(false);
@@ -51,22 +52,24 @@ export default function SoundCloudPlayer() {
   const fetchPlaylistMeta = async (url) => {
     setIsFetchingMeta(true);
     setPlaylistMeta(null);
-    try {
-      const res = await fetch(`/api/sc-meta?url=${encodeURIComponent(url)}`);
-      if (!res.ok) throw new Error(`Proxy returned ${res.status}`);
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      setPlaylistMeta({
-        title: data.title || "Untitled Playlist",
-        thumbnail_url: data.thumbnail_url || null,
-        author_name: data.author_name || "",
-      });
-    } catch {
-      // Non-fatal — player still works without the cover image
-      setPlaylistMeta(null);
-    } finally {
-      setIsFetchingMeta(false);
-    }
+    setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/sc-meta?url=${encodeURIComponent(url)}`);
+        if (!res.ok) throw new Error(`Proxy returned ${res.status}`);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        setPlaylistMeta({
+          title: data.title || "Untitled Playlist",
+          thumbnail_url: data.thumbnail_url || null,
+          author_name: data.author_name || "",
+        });
+      } catch {
+        // Non-fatal — player still works without the cover image
+        setPlaylistMeta(null);
+      } finally {
+        setIsFetchingMeta(false);
+      }
+    }, 500); // Delay fetch by 500ms
   };
 
   const initWidget = useCallback(() => {
@@ -116,28 +119,10 @@ export default function SoundCloudPlayer() {
     });
   }, [volume, isLooping]);
 
-  const handleLoad = () => {
-    const trimmed = inputUrl.trim();
-    if (!trimmed) { setError("Please enter a SoundCloud playlist URL."); return; }
-    if (!trimmed.includes("soundcloud.com")) { setError("Please enter a valid SoundCloud URL."); return; }
-    setError("");
-    setIsLoaded(false);
-    setIsPlaying(false);
-    setCurrentTrack(null);
-    setPosition(0);
-    setDuration(0);
-    clearInterval(progressInterval.current);
-    setPlaylistUrl(trimmed);
-    fetchPlaylistMeta(trimmed); // fetch cover image + title in parallel
-  };
-
   // Re-init widget whenever iframe src changes
   useEffect(() => {
     if (!playlistUrl || !isApiReady) return;
-    const timer = setTimeout(() => {
-      handleLoad();
-      initWidget()
-  }, 800);
+    const timer = setTimeout(() => initWidget(), 2000);
     return () => clearTimeout(timer);
   }, [playlistUrl, isApiReady, initWidget]);
 
@@ -173,6 +158,14 @@ export default function SoundCloudPlayer() {
     currentTrack?.artwork_url?.replace("-large", "-t200x200") ||
     playlistMeta?.thumbnail_url ||
     null;
+
+  // Only fetch meta when requested
+  useEffect(() => {
+    if (isMetaRequested && playlistUrl) {
+      fetchPlaylistMeta(playlistUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMetaRequested, playlistUrl]);
 
   return (
     <>
@@ -303,26 +296,6 @@ export default function SoundCloudPlayer() {
 
         /* ── Body ── */
         .sc-body { padding: 1.4rem 1.6rem; }
-
-        .sc-input-row {
-          display: flex;
-          gap: 0.5rem;
-          margin-bottom: 1.2rem;
-        }
-        .sc-input {
-          flex: 1;
-          background: #191919;
-          border: 1px solid #2a2a2a;
-          color: #fff;
-          font-family: 'Space Mono', monospace;
-          font-size: 0.68rem;
-          padding: 0.6rem 0.8rem;
-          border-radius: 2px;
-          outline: none;
-          transition: border-color 0.2s;
-        }
-        .sc-input:focus { border-color: #ff5500; }
-        .sc-input::placeholder { color: #3a3a3a; }
 
         .sc-btn {
           background: #ff5500;
@@ -521,8 +494,22 @@ export default function SoundCloudPlayer() {
             <div className="sc-header-sub">Playlist Player · Loop Mode</div>
           </div>
 
+          {/* Load Playlist Info Button */}
+          {!isMetaRequested && (
+            <div style={{ padding: '1.2rem 1.6rem', textAlign: 'center' }}>
+              <button
+                className="sc-btn"
+                onClick={() => setIsMetaRequested(true)}
+                disabled={isFetchingMeta}
+                style={{ minWidth: 180 }}
+              >
+                {isFetchingMeta ? 'Loading...' : 'Load Playlist Info'}
+              </button>
+            </div>
+          )}
+
           {/* ── Playlist Cover Image (fetched via oEmbed) ── */}
-          {(playlistMeta || isFetchingMeta) && (
+          {isMetaRequested && (playlistMeta || isFetchingMeta) && (
             <div className="sc-cover-section">
               {playlistMeta?.thumbnail_url ? (
                 <>
@@ -571,23 +558,6 @@ export default function SoundCloudPlayer() {
           )}
 
           <div className="sc-body">
-            {/* URL Input */}
-            <div className="sc-input-row">
-              <input
-                className="sc-input"
-                type="text"
-                placeholder="Paste SoundCloud playlist URL..."
-                value={inputUrl}
-                onChange={(e) => setInputUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLoad()}
-              />
-              <button className="sc-btn" onClick={handleLoad} disabled={!isApiReady}>
-                {isApiReady ? "LOAD" : "..."}
-              </button>
-            </div>
-
-            {error && <div className="sc-error">⚠ {error}</div>}
-
             {/* Hidden iframe — SoundCloud Widget API binds to this element */}
             {playlistUrl && (
               <iframe
