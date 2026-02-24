@@ -48,4 +48,33 @@ export const PopUpFadeInAnim = {
       ease: ease.outExpo,
     },
   },
-}
+};
+
+export const logoAnim = {
+  initial: {
+    width: 0,
+    opacity: 0,
+  },
+  animate: {
+    width: "auto",
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      delay: 0.15,
+      ease: ease.inOutExpo,
+      opacity: { delay: 0.6, duration: 0.3 },
+    },
+  },
+  exit: {
+    width: 0,
+    opacity: 0,
+    transition: {
+      opacity: { duration: 0.3 },
+      width: {
+        duration: 0.5,
+        delay: 0.15,
+        ease: ease.inOutExpo,
+      },
+    },
+  },
+};

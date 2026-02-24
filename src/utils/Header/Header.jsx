@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import "./Header.scss";
 import Link from "next/link";
@@ -7,7 +7,10 @@ import Image from "next/image";
 import clsx from "clsx";
 import useIsMobile from "@/lib/helpers/useIsMobile";
 import { AnimatePresence, motion } from "framer-motion";
-import { anim, MenuAnim } from "@/lib/helpers/anim";
+import { anim, logoAnim, MenuAnim } from "@/lib/helpers/anim";
+import { usePathname } from "next/navigation";
+import SoundcloudPlayer from "../SoundcloudPlayer/SoundcloudPlayer";
+import { useAudio } from "@/utils/AudioContext";
 
 const data = {
   nav: [
@@ -42,25 +45,74 @@ const data = {
 };
 
 export default function Header({ locale }) {
+  const [activeLogo, setActiveLogo] = useState(1);
   const [isMenuActive, setIsMenuActive] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const { isMuted, setIsMuted } = useAudio();
+  const pathname = usePathname();
 
   const isMobile = useIsMobile();
+
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setActiveLogo(activeLogo !== 3 ? activeLogo + 1 : 1);
+  }, [pathname]);
+
+  const presence = ({ isActiveItem }) => ({
+    variants: logoAnim,
+    initial: "initial",
+    animate: isActiveItem ? "animate" : "exit",
+  });
 
   return (
     <>
       <header className="header">
         <div className="header-content">
           <div className="left">
-            <Link href="/" className={clsx("logo-wrapper", {
-              "logo-wrapper--active": isMenuActive,
-            })}>
-              <img src="/assets/logo-2.svg" alt="" className="logo" />
+            <Link
+              href="/"
+              className={clsx("logo-wrapper", {
+                "logo-wrapper--active": isMenuActive,
+              })}
+            >
+              <AnimatePresence mode="sync" initial={false}>
+                <motion.img
+                  key="logo-1"
+                  {...presence({ isActiveItem: activeLogo === 1 })}
+                  src={`/assets/logo-1.svg`}
+                  alt=""
+                  className="logo"
+                />
+                <motion.img
+                  key="logo-2"
+                  {...presence({ isActiveItem: activeLogo === 2 })}
+                  src={`/assets/logo-2.svg`}
+                  alt=""
+                  className="logo"
+                />
+                <motion.img
+                  key="logo-3"
+                  {...presence({ isActiveItem: activeLogo === 3 })}
+                  src={`/assets/logo-3.svg`}
+                  alt=""
+                  className="logo"
+                />
+              </AnimatePresence>
             </Link>
 
             <div className="nav">
               {data.nav.map((item, index) => (
-                <Link key={index} href={item.href}>
+                <Link
+                  key={index}
+                  href={item.href}
+                  className={clsx("nav-item", {
+                    "nav-item--active": pathname.includes(item.href),
+                  })}
+                >
                   {item.title}
                 </Link>
               ))}
@@ -160,7 +212,7 @@ export default function Header({ locale }) {
                   "menu--active": isMenuActive,
                 })}
               >
-                <Player />
+                <SoundcloudPlayer />
                 <div className="bottom">
                   <div className="lang-switch">
                     <Link

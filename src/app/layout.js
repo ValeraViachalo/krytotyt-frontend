@@ -4,6 +4,7 @@ import { ScrollProvider } from "@/lib/providers/ScrollProvider/ScrollProvider";
 import Header from "@/utils/Header/Header";
 import Footer from "@/utils/Footer/Footer";
 import { defaultMetadata } from "@/lib/helpers/defaultMetadata";
+import { AudioProvider } from "@/utils/AudioContext";
 
 const neueHaasDisplay = localFont({
   src: [
@@ -22,8 +23,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="html">
       <body className={`${neueHaasDisplay.variable} body`}>
-        <ScrollProvider scrollBar></ScrollProvider>
-        {children}
+        <AudioProvider>
+          <ScrollProvider scrollBar></ScrollProvider>
+          {children}
+        </AudioProvider>
       </body>
     </html>
   );

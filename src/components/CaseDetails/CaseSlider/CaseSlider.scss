@@ -87,16 +87,5 @@
         }
       }
     }
-
-    /* show grab cursor on desktop for draggable feel */
-    @media (hover: hover) {
-      .case-slider-scroll {
-        cursor: grab;
-      }
-
-      .case-slider-scroll:active {
-        cursor: grabbing;
-      }
-    }
   }
 }

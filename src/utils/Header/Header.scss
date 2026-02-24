@@ -11,6 +11,32 @@
     top: EM(14);
   }
 
+  &::after,
+  &::before {
+    content: "";
+    position: absolute;
+    inset: EM(-100) 0 EM(-50);
+
+    z-index: -1;
+    pointer-events: none;
+    opacity: 1;
+
+    transition: opacity 0.3s ease;
+  }
+
+  &::after {
+    background: linear-gradient(180deg, #000 53.75%, rgba(0, 0, 0, 0) 100%);
+    opacity: 1;
+  }
+  &::before {
+    background: linear-gradient(
+      180deg,
+      #ffffff 53.75%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    opacity: 0;
+  }
+
   &-content {
     margin: 0 EM(40);
     display: flex;
@@ -60,6 +86,26 @@
 
       @include mq() {
         display: none;
+      }
+
+      &:has(.nav-item:hover) {
+        .nav-item:not(:hover) {
+          opacity: 0.4;
+        }
+      }
+
+      &-item {
+        opacity: 0.4;
+        transition: opacity 0.3s ease;
+        padding: EM(8) 0;
+
+        &--active {
+          opacity: 1;
+        }
+
+        @include hover {
+          opacity: 1;
+        }
       }
     }
 
@@ -147,7 +193,9 @@
       width: EM(21);
       height: EM(21);
       opacity: 0.3;
-      transition: opacity 0.3s ease, filter 0.3s ease;
+      transition:
+        opacity 0.3s ease,
+        filter 0.3s ease;
 
       @include hover {
         opacity: 1;
@@ -547,6 +595,13 @@
 .body {
   &:has(.page--white) {
     .header {
+      &::after {
+        opacity: 0 !important;
+      }
+      &::before {
+        opacity: 1 !important;
+      }
+
       .left {
         .logo-wrapper .logo {
           filter: invert(0);
