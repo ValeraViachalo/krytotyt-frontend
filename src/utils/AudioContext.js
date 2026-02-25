@@ -117,7 +117,21 @@ export function AudioProvider({ children }) {
     }
   }, [isPlayerReady, isMuted]);
 
-  // ── 5. Cleanup interval on unmount ───────────────────────────────────────
+  // ── 5. Pause when tab is hidden, resume when visible again ──────────────
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!isPlayerReady || !widgetRef.current) return;
+      if (document.hidden) {
+        widgetRef.current.pause();
+      } else if (!isMuted) {
+        widgetRef.current.play();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [isPlayerReady, isMuted]);
+
+  // ── 6. Cleanup interval on unmount ───────────────────────────────────────
   useEffect(() => () => clearInterval(progressInterval.current), []);
 
   // ── Exposed controls ──────────────────────────────────────────────────────
