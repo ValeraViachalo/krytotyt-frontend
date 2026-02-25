@@ -1,146 +1,33 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
 import { useAudio } from "@/utils/AudioContext";
 import "./SoundcloudPlayer.scss";
 
-const SOUNDCLOUD_WIDGET_URL = "https://w.soundcloud.com/player/";
 const URL_PLAYLIST = "https://soundcloud.com/krytotytmusic";
 
-function normalizeTitle(title) {
-  if (!title) return "";
-  return title
-    .replace(/[\p{So}\p{Sk}\p{Mn}\p{Lm}\p{Cf}\p{Cs}\p{Co}\p{Cn}\u2000-\u206F\u2E00-\u2E7F\u2600-\u26FF\u2700-\u27BF\uFE00-\uFE0F\u1F900-\u1F9FF\u1F300-\u1F5FF\u1F600-\u1F64F\u1F680-\u1F6FF\u1F700-\u1F77F\u1F780-\u1F7FF\u1F800-\u1F8FF\u1F900-\u1F9FF\u1FA00-\u1FA6F\u1FA70-\u1FAFF\u2300-\u23FF\u25A0-\u25FF\u2190-\u21FF]+/gu, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
 export default function SoundcloudPlayer() {
-  const { isMuted } = useAudio();
-  const playlistUrl = URL_PLAYLIST;
+  const {
+    isPlayerReady,
+    currentTrackIndex,
+    position,
+    duration,
+    playlistMeta,
+    next,
+  } = useAudio();
 
-  // Metadata from our API route (server-side, no CAPTCHA)
-  const [playlistMeta, setPlaylistMeta] = useState(null);  // { title, artwork_url, tracks[] }
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-
-  // Widget state
-  const [isMounted, setIsMounted] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [position, setPosition] = useState(0);
-  const [error, setError] = useState("");
-  const [isApiReady, setIsApiReady] = useState(false);
-
-  const iframeRef = useRef(null);
-  const widgetRef = useRef(null);
-  const progressInterval = useRef(null);
-  const scriptRef = useRef(null);
-
-  // ── Render iframe only after mount ────────────────────────────────────────
-  useEffect(() => { setIsMounted(true); }, []);
-
-  // ── Fetch playlist metadata from our secure API route ──────────────────────
-  useEffect(() => {
-    fetch("/api/soundcloud")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) throw new Error(data.error);
-        setPlaylistMeta(data);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch playlist metadata:", err);
-        // Non-fatal — component still works with fallback values
-      });
-  }, []);
+console.log("playlistMeta:", playlistMeta, "currentTrackIndex:", currentTrackIndex);
 
   // ── Derived display values ─────────────────────────────────────────────────
   const currentTrack = playlistMeta?.tracks?.[currentTrackIndex] ?? null;
 
-  const displayTitle = currentTrack?.title
-    ? normalizeTitle(currentTrack.title)
-    : normalizeTitle(playlistMeta?.title) || "KRYTOTYT playlist";
+  const displayTitle = currentTrack?.title || "KRYTOTYT playlist";
 
-  const displayArtwork = currentTrack?.artwork_url
-    ?? playlistMeta?.artwork_url
-    ?? "/assets/player-thumbnail.jpg";
-
-  // ── SoundCloud Widget API ──────────────────────────────────────────────────
-  useEffect(() => {
-    if (window.SC) { setIsApiReady(true); return; }
-    const script = document.createElement("script");
-    script.src = "https://w.soundcloud.com/player/api.js";
-    script.async = true;
-    script.onload = () => setIsApiReady(true);
-    script.onerror = () => setError("Failed to load SoundCloud API.");
-    document.body.appendChild(script);
-    scriptRef.current = script;
-    return () => { if (scriptRef.current) document.body.removeChild(scriptRef.current); };
-  }, []);
-
-  const buildEmbedUrl = (url) => {
-    const encoded = encodeURIComponent(url);
-    return `${SOUNDCLOUD_WIDGET_URL}?url=${encoded}&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false&color=%23ff5500`;
-  };
-
-  const initWidget = useCallback(() => {
-    if (!iframeRef.current || !window.SC) return;
-    const widget = window.SC.Widget(iframeRef.current);
-    widgetRef.current = widget;
-
-    widget.bind(window.SC.Widget.Events.READY, () => {
-      setIsLoaded(true);
-      setError("");
-    });
-
-    widget.bind(window.SC.Widget.Events.PLAY, () => {
-      setIsPlaying(true);
-      // Sync currentTrackIndex so artwork + title update on track change
-      widget.getCurrentSoundIndex((idx) => {
-        setCurrentTrackIndex(idx ?? 0);
-      });
-      // Clear any existing interval before starting a new one
-      clearInterval(progressInterval.current);
-      progressInterval.current = setInterval(() => {
-        widget.getPosition((pos) => setPosition(pos));
-        widget.getDuration((dur) => setDuration(dur));
-      }, 500);
-    });
-
-    widget.bind(window.SC.Widget.Events.PAUSE, () => {
-      setIsPlaying(false);
-      clearInterval(progressInterval.current);
-    });
-
-    widget.bind(window.SC.Widget.Events.ERROR, () => {
-      setError("Error loading track. Ensure the playlist is public.");
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!playlistUrl || !isApiReady) return;
-    const timer = setTimeout(() => initWidget(), 800);
-    return () => clearTimeout(timer);
-  }, [playlistUrl, isApiReady, initWidget]);
-
-  useEffect(() => () => clearInterval(progressInterval.current), []);
-
-  // ── Playback controls ──────────────────────────────────────────────────────
-  const handlePlayPause = () => widgetRef.current?.toggle();
-  const handleNext = () => widgetRef.current?.next();
+  const displayArtwork =
+    currentTrack?.artwork_url ??
+    playlistMeta?.artwork_url ??
+    "/assets/player-thumbnail.jpg";
 
   const progressPct = duration ? (position / duration) * 100 : 0;
-
-  // ── Volume / mute sync ─────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isLoaded || !widgetRef.current) return;
-    widgetRef.current.setVolume(isMuted ? 0 : 80);
-    if (!isMuted) {
-      widgetRef.current.play();
-    } else {
-      widgetRef.current.pause();
-    }
-  }, [isLoaded, isMuted]);
 
   return (
     <div className="player">
@@ -160,10 +47,10 @@ export default function SoundcloudPlayer() {
           </div>
         </div>
 
-        {/* TEST: next track button — remove when no longer needed */}
         <button
           className="player__next"
-          onClick={handleNext}
+          onClick={next}
+          disabled={!isPlayerReady}
           title="Next track"
           aria-label="Next track"
         >
@@ -174,7 +61,7 @@ export default function SoundcloudPlayer() {
         </button>
 
         <a
-          href={playlistMeta?.permalink_url ?? playlistUrl}
+          href={playlistMeta?.permalink_url ?? URL_PLAYLIST}
           target="_blank"
           rel="noopener noreferrer"
           className="player__link"
@@ -196,19 +83,8 @@ export default function SoundcloudPlayer() {
             </defs>
           </svg>
         </a>
-
-        {/* Hidden iframe — SoundCloud Widget API binds to this for playback */}
-        {isMounted && (
-          <iframe
-            ref={iframeRef}
-            className="sc-ifram"
-            title="SoundCloud Widget"
-            src={buildEmbedUrl(playlistUrl)}
-            allow="autoplay"
-            // style={{ display: "none" }}
-          />
-        )}
       </div>
     </div>
   );
 }
+

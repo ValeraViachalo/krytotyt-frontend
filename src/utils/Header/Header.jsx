@@ -47,7 +47,7 @@ const data = {
 export default function Header({ locale }) {
   const [activeLogo, setActiveLogo] = useState(1);
   const [isMenuActive, setIsMenuActive] = useState(false);
-  const { isMuted, setIsMuted } = useAudio();
+  const { isMuted, setIsMuted, isPlayerReady } = useAudio();
   const pathname = usePathname();
 
   const isMobile = useIsMobile();
@@ -138,6 +138,7 @@ export default function Header({ locale }) {
               <button
                 className="header-button"
                 onClick={() => setIsMuted(!isMuted)}
+                disabled={!isPlayerReady}
               >
                 {isMuted ? (
                   <svg
@@ -289,6 +290,7 @@ export default function Header({ locale }) {
                   <button
                     className="header-button"
                     onClick={() => setIsMuted(!isMuted)}
+                    disabled={!isPlayerReady}
                   >
                     {isMuted ? (
                       <svg

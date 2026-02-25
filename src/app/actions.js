@@ -2,6 +2,140 @@
 
 import nodemailer from "nodemailer";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SoundCloud helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+let cachedToken = null;
+let tokenExpiresAt = 0;
+
+async function getAccessToken() {
+  if (cachedToken && Date.now() < tokenExpiresAt - 60_000) return cachedToken;
+
+  const clientId = process.env.SOUNDCLOUD_CLIENT_ID;
+  const clientSecret = process.env.SOUNDCLOUD_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    throw new Error("Missing SOUNDCLOUD_CLIENT_ID or SOUNDCLOUD_CLIENT_SECRET env vars");
+  }
+
+  const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+
+  let res = await fetch("https://secure.soundcloud.com/oauth/token", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${credentials}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+      Accept: "application/json; charset=utf-8",
+    },
+    body: new URLSearchParams({ grant_type: "client_credentials" }),
+  });
+
+  if (!res.ok) {
+    res = await fetch("https://api.soundcloud.com/oauth2/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      },
+      body: new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: clientId,
+        client_secret: clientSecret,
+      }),
+    });
+  }
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Token request failed (${res.status}): ${errText}`);
+  }
+
+  const data = await res.json();
+  cachedToken = data.access_token;
+  tokenExpiresAt = Date.now() + (data.expires_in ?? 21600) * 1000;
+  return cachedToken;
+}
+
+function upsizeArtwork(url) {
+  if (!url) return null;
+  return url
+    .replace(/-large(?=\.|$)/, "-t500x500")
+    .replace("-t67x67", "-t500x500")
+    .replace("-t200x200", "-t500x500");
+}
+
+export async function getSoundcloudPlaylist() {
+  try {
+    const token = await getAccessToken();
+    const playlistUrl = process.env.SOUNDCLOUD_PLAYLIST_URL;
+
+    if (!playlistUrl) {
+      throw new Error("Missing SOUNDCLOUD_PLAYLIST_URL env var");
+    }
+
+    // Try resolving the URL directly (works for playlist/track URLs)
+    let resolveRes = await fetch(
+      `https://api.soundcloud.com/resolve?url=${encodeURIComponent(playlistUrl)}`,
+      { headers: { Authorization: `OAuth ${token}` } }
+    );
+
+    let playlist = null;
+
+    if (resolveRes.ok) {
+      const resolved = await resolveRes.json();
+
+      // If it resolved to a user profile, grab their first public playlist
+      if (resolved.kind === "user") {
+        const setsRes = await fetch(
+          `https://api.soundcloud.com/users/${resolved.id}/playlists?limit=1`,
+          { headers: { Authorization: `OAuth ${token}` } }
+        );
+        if (!setsRes.ok) throw new Error(`Playlists fetch failed (${setsRes.status})`);
+        const sets = await setsRes.json();
+        playlist = sets[0] ?? null;
+      } else {
+        playlist = resolved;
+      }
+    }
+
+    if (!playlist) throw new Error("Could not resolve a playlist from SOUNDCLOUD_PLAYLIST_URL");
+
+    let tracks = playlist.tracks ?? [];
+
+    // Stubs come back without titles — fetch full track objects
+    if (tracks.length === 0 || (tracks.length > 0 && !tracks[0].title)) {
+      const tracksRes = await fetch(
+        `https://api.soundcloud.com/playlists/${playlist.id}/tracks?limit=200`,
+        { headers: { Authorization: `OAuth ${token}` } }
+      );
+      if (tracksRes.ok) {
+        tracks = await tracksRes.json();
+      }
+    }
+
+    return {
+      title: playlist.title ?? "",
+      artwork_url: upsizeArtwork(playlist.artwork_url ?? tracks[0]?.artwork_url ?? null),
+      permalink_url: playlist.permalink_url ?? playlistUrl,
+      tracks: tracks.map((t) => ({
+        id: t.id,
+        title: t.title ?? "",
+        artwork_url: upsizeArtwork(t.artwork_url),
+        duration: t.duration ?? 0,
+        permalink_url: t.permalink_url ?? "",
+      })),
+    };
+  } catch (err) {
+    console.error("[getSoundcloudPlaylist]", err.message);
+    return { error: err.message };
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Email action
+// ─────────────────────────────────────────────────────────────────────────────
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
