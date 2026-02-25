@@ -15,8 +15,6 @@ export default function SoundcloudPlayer() {
     next,
   } = useAudio();
 
-console.log("playlistMeta:", playlistMeta, "currentTrackIndex:", currentTrackIndex);
-
   // ── Derived display values ─────────────────────────────────────────────────
   const currentTrack = playlistMeta?.tracks?.[currentTrackIndex] ?? null;
 
