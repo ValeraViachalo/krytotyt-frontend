@@ -70,7 +70,9 @@ export default function Header({ locale }) {
 
   return (
     <>
-      <header className="header">
+      <header className={clsx("header", {
+        "header--active": isMenuActive,
+      })}>
         <div className="header-content">
           <div className="left">
             <Link
@@ -323,7 +325,7 @@ export default function Header({ locale }) {
                     )}
                   </button>
                 </div>
-                <Player />
+                <SoundcloudPlayer />
                 <div className="bottom">
                   <div className="lang-switch">
                     <Link

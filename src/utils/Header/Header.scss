@@ -37,6 +37,15 @@
     opacity: 0;
   }
 
+  &--active {
+    &::after {
+      display: none !important;
+    }
+    &::before {
+      display: none !important;
+    }
+  }
+
   &-content {
     margin: 0 EM(40);
     display: flex;
