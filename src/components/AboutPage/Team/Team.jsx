@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import "./Team.scss";
 import Image from "next/image";
@@ -8,13 +8,71 @@ import { anim, MenuAnim, PopUpFadeInAnim } from "@/lib/helpers/anim";
 import clsx from "clsx";
 import useIsMobile from "@/lib/helpers/useIsMobile";
 
+/**
+ * Split the team list into rows:
+ *  - first row: always 3
+ *  - subsequent rows: up to 4 each
+ */
+function buildRows(list = []) {
+  const rows = [];
+  if (!list.length) return rows;
+
+  rows.push(list.slice(0, 3));
+  let cursor = 3;
+
+  while (cursor < list.length) {
+    rows.push(list.slice(cursor, cursor + 4));
+    cursor += 4;
+  }
+
+  return rows;
+}
+
+/**
+ * Determine popup position class based on which row and column
+ * the active member sits in.
+ *
+ * Horizontal: member is in the left half of its row → popup goes right,
+ *             member is in the right half → popup goes left.
+ * Vertical:   first row → popup goes down (bottom),
+ *             last row  → popup goes up (top),
+ *             middle rows → whichever half of total rows it's closer to.
+ */
+function getPopupPosition(activeIndex, rows) {
+  if (activeIndex === null || !rows.length) return "";
+
+  // Find which row and column this index belongs to
+  let rowIdx = 0;
+  let colIdx = 0;
+  let cursor = 0;
+  for (let r = 0; r < rows.length; r++) {
+    if (activeIndex < cursor + rows[r].length) {
+      rowIdx = r;
+      colIdx = activeIndex - cursor;
+      break;
+    }
+    cursor += rows[r].length;
+  }
+
+  const rowLen = rows[rowIdx].length;
+  const isRight = colIdx >= rowLen / 2;
+  const isBottom = rowIdx < rows.length / 2;
+
+  const h = isRight ? "left" : "right";
+  const v = isBottom ? "bottom" : "top";
+  return `team-popup--${h}-${v}`;
+}
+
 export default function Team({ data }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const activePopup = data?.list[activeIndex];
   const isMobile = useIsMobile();
 
+  const rows = useMemo(() => buildRows(data?.list), [data?.list]);
+  const isCompact = (data?.list?.length ?? 0) <= 6;
+
   // Auto-close popup on scroll for mobile
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isMobile || activeIndex === null) return;
 
     const handleScroll = () => {
@@ -38,17 +96,12 @@ export default function Team({ data }) {
   };
 
   return (
-    <section className="team container">
+    <section className={clsx("team container", { "team--compact": isCompact })}>
       <div className="team-container">
         <AnimatePresence mode="sync">
           {activePopup && (
             <motion.div
-              className={clsx("team-popup", {
-                "team-popup--left-top": [5, 6, 8, 9].includes(activeIndex),
-                "team-popup--left-bottom": [2].includes(activeIndex),
-                "team-popup--right-top": [3, 7, 4].includes(activeIndex),
-                "team-popup--right-bottom": [0, 1].includes(activeIndex),
-              })}
+              className={clsx("team-popup", getPopupPosition(activeIndex, rows))}
               key={`${activeIndex}-${activePopup.name}`}
               {...anim(PopUpFadeInAnim)}
             >
@@ -66,72 +119,39 @@ export default function Team({ data }) {
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="team-row">
-          {data?.list.slice(0, 3).map((member, index) => (
-            <div
-              className={clsx("team-member", {
-                "team-member--active": activeIndex === index,
-                "team-member--highlighted":  activeIndex !== null,
+
+        {rows.map((row, rowIdx) => {
+          // Calculate the global starting index for members in this row
+          const globalOffset = rowIdx === 0 ? 0 : 3 + (rowIdx - 1) * 4;
+
+          return (
+            <div className="team-row" key={rowIdx}>
+              {row.map((member, i) => {
+                const globalIndex = globalOffset + i;
+                return (
+                  <div
+                    className={clsx("team-member", {
+                      "team-member--active": activeIndex === globalIndex,
+                      "team-member--highlighted": activeIndex !== null,
+                    })}
+                    key={globalIndex}
+                    {...getMemberHandlers(globalIndex)}
+                  >
+                    <div className="team-member__image">
+                      <Image
+                        src={member?.image}
+                        alt={`${member?.name}'s photo`}
+                        className="photo"
+                        width={200}
+                        height={200}
+                      />
+                    </div>
+                  </div>
+                );
               })}
-              key={index}
-              {...getMemberHandlers(index)}
-            >
-              <div className="team-member__image">
-                <Image
-                  src={member?.image}
-                  alt={`${member?.name}'s photo`}
-                  className="photo"
-                  width={200}
-                  height={200}
-                />
-              </div>
             </div>
-          ))}
-        </div>
-        <div className="team-row">
-          {data?.list.slice(3, 7).map((member, index) => (
-            <div
-              className={clsx("team-member", {
-                "team-member--active": activeIndex === index + 3,
-                "team-member--highlighted": activeIndex !== null,
-              })}
-              key={index}
-              {...getMemberHandlers(index + 3)}
-            >
-              <div className="team-member__image">
-                <Image
-                  src={member?.image}
-                  alt={`${member?.name}'s photo`}
-                  className="photo"
-                  width={200}
-                  height={200}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="team-row">
-          {data?.list.slice(7).map((member, index) => (
-            <div
-              className={clsx("team-member", {
-                "team-member--active": activeIndex === index + 7,
-                "team-member--highlighted":  activeIndex !== null,
-              })}
-              key={index}
-              {...getMemberHandlers(index + 7)}
-            >
-              <div className="team-member__image">
-                <Image
-                  src={member?.image}
-                  alt={`${member?.name}'s photo`}
-                  className="photo"
-                  width={200}
-                  height={200}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </section>
   );
