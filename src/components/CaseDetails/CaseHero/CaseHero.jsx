@@ -11,8 +11,8 @@ export default function CaseHero({ data }) {
         <div className="bottom">
           <BlockContent content={data?.text} className="shadow" />
           <div className="services-list">
-            {data?.services?.map((service) => (
-              <div key={service.id} className="service">
+            {data?.services?.map((service, i) => (
+              <div key={i} className="service">
                 <svg
                   width="26"
                   height="23"

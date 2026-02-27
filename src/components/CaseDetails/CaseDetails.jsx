@@ -1,10 +1,11 @@
 "use client";
 import React from "react";
 import CaseHero from "./CaseHero/CaseHero";
-import CaseSlider from "./CaseSlider/CaseSlider";
+// import CaseSlider from "./CaseSliderOld/CaseSlider";
 import { useFormPopUp } from "@/utils/FormPopUp/context";
 
 import "./CaseDetails.scss";
+import CaseSmoothSlider from "./CaseSmoothSlider/CaseSmoothSlider";
 
 export default function CaseDetails({ data }) {
   console.log("CaseDetails data:", data);
@@ -13,7 +14,8 @@ export default function CaseDetails({ data }) {
   return (
     <main className="case-details page--white">
       <CaseHero data={data} />
-      <CaseSlider data={data?.images} />
+      {/* <CaseSlider data={data?.images} /> */}
+      <CaseSmoothSlider data={data?.images} />
       <div className="case-details__button">
         <button className="button" onClick={openForm}>
           <span className="button__text">замовити проект</span>
