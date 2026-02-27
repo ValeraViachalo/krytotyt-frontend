@@ -1,0 +1,40 @@
+.legal-page {
+  &__container {
+    width: calc(100% - EM(120));
+    max-width: EM(620);
+    
+    padding: EM(270) 0 EM(56);
+    margin: 0 auto;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @include mq() {
+      padding: EM(160) 0 EM(56);
+    }
+  }
+
+  .block-content {
+    margin-top: EM(80);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: EM(48);
+
+    @include mq() {
+      margin-top: EM(48);
+      gap: EM(32);
+    }
+  }
+
+  .button {
+    margin-top: EM(160);
+
+    @include mq() {
+      margin-top: EM(105);
+    }
+  }
+}

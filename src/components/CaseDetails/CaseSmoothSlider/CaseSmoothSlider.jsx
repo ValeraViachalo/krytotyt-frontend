@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Core from "smooothy";
+import Core, { lerp } from "smooothy";
 import gsap from "gsap";
 import "./CaseSmoothSlider.scss";
 import Image from "next/image";
@@ -39,9 +39,9 @@ export default function CaseSmoothSlider({ data }) {
 
   const { ref, slider } = useSmooothy({
     variableWidth: true,
-    snapStrength: 0.8,
-    dragSensitivity: 0.5,
     lerpFactor: isMobile ? 0.1 : 0.2,
+    scrollSensitivity: 0.2,
+    dragSensitivity: 0.2,
     onUpdate: () => {
       const viewportCenter = window.innerWidth / 2;
       imageRefs.current.forEach((el) => {

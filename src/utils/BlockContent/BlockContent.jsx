@@ -50,14 +50,14 @@ const serializers = {
   },
 };
 
-export default function BlockContent({ content, className }) {
+export default function BlockContent({ content, classes }) {
   return (
     <SanityBlockContent
       dataset={process.env.NEXT_PUBLIC_SANITY_DATASET || "production"}
       projectId={process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}
       blocks={content}
       serializers={serializers}
-      className={"block-content" + (className ? ` ${className}` : "")}
+      className={"block-content" + (classes ? ` ${classes}` : "")}
     />
   );
 }

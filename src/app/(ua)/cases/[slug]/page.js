@@ -15,5 +15,9 @@ async function fetchCaseData({ slug }) {
 export default async function page({ params }) {
   const data = await fetchCaseData({ slug: params.slug });
 
+  if (!data) {
+    return <div>No data found</div>;
+  }
+
   return <CaseDetails data={data} />
 }

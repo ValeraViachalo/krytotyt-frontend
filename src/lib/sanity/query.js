@@ -50,3 +50,10 @@ export const QUERY_CASES_DETAILS = `
   }
 }
   `;
+
+export const QUERY_PRIVACY_PAGE = `
+*[_type == "privacyPolicy"][0]{
+  "title": coalesce(title[$lang], title.ua),
+  "content": coalesce(text[$lang], text.ua)
+}
+`;
