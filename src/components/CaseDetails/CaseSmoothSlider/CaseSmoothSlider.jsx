@@ -35,7 +35,7 @@ export function useSmooothy(config) {
 
 export default function CaseSmoothSlider({ data }) {
   const imageRefs = useRef([]);
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile();  
 
   const { ref, slider } = useSmooothy({
     variableWidth: true,
@@ -71,6 +71,9 @@ export default function CaseSmoothSlider({ data }) {
                 src={slide?.imageUrl}
                 alt={`Slide ${i}`}
                 className="smooth-slider__slide-image"
+                style={{ 
+                  aspectRatio: `${slide?.width} / ${slide?.height}`,
+                }}
               />
             </div>
           </div>

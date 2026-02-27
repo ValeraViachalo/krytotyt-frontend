@@ -21,25 +21,32 @@ export const QUERY_CASES_CATALOG = `
 }
 `;
 
-export const QUERY_CASES_DETAILS = `*[_type == "projectDetails" && slug.current == $slug][0]{
+export const QUERY_CASES_DETAILS = `
+*[_type == "projectDetails" && slug.current == $slug][0]{
   _id,
   "name": coalesce(name[$lang], name.ua),
   "slug": slug.current,
   "text": coalesce(text[$lang], text.ua),
   projectType->{
+    _id,
     "name": coalesce(name[$lang], name.ua),
     "slug": slug.current
   },
   services[]->{
+    _id,
     "name": coalesce(itemName[$lang], itemName.ua),
     "slug": slug.current,
     service->{
+      _id,
       "name": coalesce(name[$lang], name.ua),
       "slug": slug.current
     }
   },
   images[]{
     "imageUrl": image.asset->url,
+    "width": image.asset->metadata.dimensions.width,
+    "height": image.asset->metadata.dimensions.height,
     showForCatalog
   }
-}`;
+}
+  `;
