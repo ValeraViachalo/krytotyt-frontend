@@ -15,51 +15,49 @@
 
     &-scroll {
       overflow: hidden;
-      max-width: calc(100% - EM(120));
+      width: 100%;
+      display: flex;
+      align-items: center;
+      position: relative;
 
-      @include mq() {
-        padding: 0 EM(60);
-      }
-
-      /* allow JS to handle horizontal swipes while preserving vertical scroll */
       touch-action: pan-y;
       -webkit-touch-callout: none;
       -webkit-tap-highlight-color: transparent;
-    }
+      cursor: grab;
 
-    &-list {
-      display: flex;
-      align-items: center;
-      width: max-content;
-      transition: transform 1s $ease-in-out-quint;
-      will-change: transform;
-
-      &.dragging {
-        transition: none !important;
+      &:active {
+        cursor: grabbing;
       }
-
-      /* prevent accidental text selection while dragging */
-      user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
     }
 
     &-item {
-      width: 20em;
+      flex-shrink: 0;
+      width: auto;
+      height: EM(560);
       margin-right: 0.25em;
-      height: auto;
-      max-height: EM(500);
 
-      img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-
-        /* prevent native image dragging */
-        -webkit-user-drag: none;
-        user-select: none;
-        -webkit-touch-callout: none;
+      @include mq() {
+        height: EM(260);
       }
+
+      &__inner {
+        width: auto;
+        height: EM(560);
+        transform-origin: center center;
+        will-change: transform;
+        overflow: hidden;
+      }
+    }
+
+    &-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
 
     .arrows {
@@ -89,3 +87,4 @@
     }
   }
 }
+

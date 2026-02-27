@@ -1,19 +1,26 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Script from "next/script";
 import "./CablesCanvas.scss";
 
-export default function CablesCanvas({ projectsData }) {
+const PATCH_DIR = "/cables/";
+const CANVAS_ID = "cables-canvas";
+
+export default function CablesCanvas({
+  projectsData,
+  patchDir = PATCH_DIR,
+  canvasId = CANVAS_ID,
+  patchOptions: patchOptionsProp = {},
+}) {
   const router = useRouter();
   const patchRef = useRef(null);
   const initializedRef = useRef(false);
+  const scriptRef = useRef(null);
 
-  // Build the projectsData array expected by the CABLES patch
-
-  function initPatch() {
-    if (initializedRef.current || !window.CABLES?.exportedPatch) return;
+  const initPatch = useCallback(() => {
+    if (initializedRef.current) return;
+    if (!window.CABLES?.exportedPatch) return;
     initializedRef.current = true;
 
     function projectClickedSlug(params) {
@@ -29,13 +36,13 @@ export default function CablesCanvas({ projectsData }) {
     // Expose globally so CABLES CallBack_v2 can reach it
     window.projectClickedSlug = projectClickedSlug;
 
-    patchRef.current = new CABLES.Patch({
+    const options = {
       patch: CABLES.exportedPatch,
-      prefixAssetPath: "",
-      assetPath: "/cables/assets/",
-      jsPath: "/cables/js/",
-      glCanvasId: "cables-canvas",
+      prefixAssetPath: patchDir,
+      jsPath: patchDir + "js/",
+      glCanvasId: canvasId,
       glCanvasResizeToWindow: true,
+      canvas: { alpha: true, premultipliedAlpha: true },
       onError: (initiator, ...args) =>
         console.error("[CABLES]", initiator, ...args),
       onPatchLoaded: () => {
@@ -43,44 +50,55 @@ export default function CablesCanvas({ projectsData }) {
       },
       onFinishedLoading: () => {
         console.log("[CABLES] Finished loading");
-        patchRef.current.setVariable("zoomState", 1);
-        patchRef.current.setVariable("projectsData", projectsData);
+        patchRef.current?.setVariable("zoomState", 1);
+        patchRef.current?.setVariable("projectsData", projectsData);
       },
       projectClickedSlug,
       variables: {
         zoomState: 0,
         projectsData,
       },
-    });
-  }
+      ...patchOptionsProp,
+    };
 
-  // If CABLES is already loaded (hot reload / back-navigation), init immediately
+    patchRef.current = new CABLES.Patch(options);
+  }, [router, patchDir, canvasId, projectsData, patchOptionsProp]);
+
   useEffect(() => {
-    const handler = () => initPatch();
-    document.addEventListener("CABLES.jsLoaded", handler);
+    // If script was already loaded (e.g. hot-reload / back-navigation)
+    if (window.CABLES?.exportedPatch && !initializedRef.current) {
+      initPatch();
+      return;
+    }
 
-    // Script may have already fired before this effect ran
-    if (window.CABLES?.exportedPatch && !initializedRef.current) initPatch();
+    // Dynamically inject the patch script (like the reference CablesPatch)
+    const script = document.createElement("script");
+    script.src = patchDir + "patch.js";
+    script.async = true;
+    script.onload = () => initPatch();
+    document.body.appendChild(script);
+    scriptRef.current = script;
 
     return () => {
-      document.removeEventListener("CABLES.jsLoaded", handler);
       // Destroy patch on unmount to free WebGL context
       patchRef.current?.pause?.();
       patchRef.current = null;
       initializedRef.current = false;
+
+      // Clean up injected script
+      if (scriptRef.current && scriptRef.current.parentNode) {
+        scriptRef.current.parentNode.removeChild(scriptRef.current);
+        scriptRef.current = null;
+      }
     };
-  }, []);
+  }, [patchDir, initPatch]);
 
   return (
     <div className="cables-wrapper">
       <canvas
-        id="cables-canvas"
+        id={canvasId}
         className="cables-canvas"
         tabIndex={1}
-        />
-        <Script
-        src="/cables/patch.js"
-        strategy="afterInteractive"
       />
     </div>
   );
