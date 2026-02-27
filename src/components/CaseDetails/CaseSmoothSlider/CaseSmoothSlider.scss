@@ -65,11 +65,11 @@
         width: auto;
         height: 100%;
 
-        // @include mq {
-        //   width: EM(320);
-        //   height: auto;
-        //   max-height: EM(400);
-        // }
+        @include mq {
+          width: EM(320);
+          height: auto;
+          max-height: EM(400);
+        }
       }
     }
   }
