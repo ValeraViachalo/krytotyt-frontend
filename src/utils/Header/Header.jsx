@@ -53,6 +53,32 @@ export default function Header({ locale }) {
   const isMobile = useIsMobile();
 
   const isFirstRender = useRef(true);
+  const headerRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isMenuActive) return;
+
+    const handleClickOutside = (e) => {
+      const inHeader = headerRef.current?.contains(e.target);
+      const inMobileMenu = mobileMenuRef.current?.contains(e.target);
+      if (!inHeader && !inMobileMenu) {
+        setIsMenuActive(false);
+      }
+    };
+
+    const handleScroll = () => {
+      setIsMenuActive(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMenuActive]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -70,7 +96,7 @@ export default function Header({ locale }) {
 
   return (
     <>
-      <header className={clsx("header", {
+      <header ref={headerRef} className={clsx("header", {
         "header--active": isMenuActive,
       })}>
         <div className="header-content">
@@ -262,7 +288,7 @@ export default function Header({ locale }) {
       </header>
       <AnimatePresence mode="wait">
         {isMobile && isMenuActive && (
-          <motion.div {...anim(MenuAnim)} className="mobile-menu">
+          <motion.div ref={mobileMenuRef} {...anim(MenuAnim)} className="mobile-menu">
             <div className="mobile-menu-content">
               <div className="nav-wrapper">
                 <div className="nav">

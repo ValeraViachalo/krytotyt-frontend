@@ -57,6 +57,7 @@ export default function BlockContent({ content, classes }) {
       projectId={process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}
       blocks={content}
       serializers={serializers}
+      renderContainerOnSingleChild
       className={"block-content" + (classes ? ` ${classes}` : "")}
     />
   );

@@ -57,3 +57,62 @@ export const QUERY_PRIVACY_PAGE = `
   "content": coalesce(text[$lang], text.ua)
 }
 `;
+
+export const QUERY_SERVICES_PAGE = `
+{
+"list": *[_type == "service"]|order(coalesce(name[$lang], name.ua) asc){
+  _id,
+  "name": coalesce(name[$lang], name.ua),
+  "slug": slug.current,
+  // If service.list stores references to serviceItem
+  list[]->{
+    _id,
+    "name": coalesce(itemName[$lang], itemName.ua),
+    "slug": slug.current
+  }
+}
+}`
+
+export const QUERY_ABOUT_PAGE = `
+*[_type == "about" && _id == "about"][0]{
+  "team": team{
+      "list": list[]{
+        "image":    image.asset->url,
+        "name":     coalesce(name[$lang], name.ua),
+        "position": coalesce(position[$lang], position.ua),
+        "text":     coalesce(text[$lang], text.ua)     // Portable Text array
+      }
+    },
+
+    "about": about{
+      "title": coalesce(title[$lang], title.ua),
+      "text":  coalesce(text[$lang], text.ua)          // Portable Text array
+    },
+
+    "services": services{
+      "title": coalesce(title[$lang], title.ua),
+      "text":  coalesce(text[$lang], text.ua),
+      "button": button{
+        "text": coalesce(text[$lang], text.ua),
+        "href": href
+      },
+      "list": list[]{"text": coalesce(text[$lang], text.ua)}
+    },
+
+    "howItWorks": howItWorks{
+      "title":      coalesce(title[$lang], title.ua),
+      "text":       coalesce(text[$lang], text.ua),      // Portable Text array
+      "list": list[]{
+        "icon":  icon.asset->url,
+        "title": coalesce(title[$lang], title.ua)
+      },
+      "bottomText": coalesce(bottomText[$lang], bottomText.ua) // Portable Text array
+    },
+
+    "footer": footer{
+      "title":      coalesce(title[$lang], title.ua),
+      "text":       coalesce(text[$lang], text.ua),      // Portable Text array
+      "buttonToUp": coalesce(buttonToUp[$lang], buttonToUp.ua)
+    }
+  }
+`;

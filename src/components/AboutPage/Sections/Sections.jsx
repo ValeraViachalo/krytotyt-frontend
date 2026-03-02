@@ -3,6 +3,7 @@ import React from "react";
 import "./Sections.scss";
 import Link from "next/link";
 import Image from "next/image";
+import BlockContent from "@/utils/BlockContent/BlockContent";
 
 export default function Sections({ data }) {
   return (
@@ -20,7 +21,9 @@ export default function Sections({ data }) {
 const AboutFooter = ({ footer }) => (
   <div className="about-footer">
     <h2>{footer?.title}</h2>
-    <p className="shadow" dangerouslySetInnerHTML={{ __html: footer?.text }} />
+    {/* <p className="shadow" dangerouslySetInnerHTML={{ __html: footer?.text }} /> */}
+
+    <BlockContent content={footer?.text} classes="shadow" />
     <Image
       src="/assets/about/heart-filled.svg"
       alt="heart icon"
@@ -49,10 +52,11 @@ const HowItWorks = ({ howItWorks }) => (
   <div className="how-it-works">
     <div className="top">
       <h2>{howItWorks?.title}</h2>
-      <p
+      {/* <p
         className="shadow"
         dangerouslySetInnerHTML={{ __html: howItWorks?.text }}
-      />
+      /> */}
+      <BlockContent content={howItWorks?.text} classes="shadow" />
     </div>
 
     <div className="list">
@@ -88,20 +92,18 @@ const HowItWorks = ({ howItWorks }) => (
         ))}
     </div>
 
-    <p
-      className="bottom shadow"
-      dangerouslySetInnerHTML={{ __html: howItWorks?.bottomText }}
-    />
+    <BlockContent content={howItWorks?.bottomText} classes="bottom shadow" />
   </div>
 );
 
 const About = ({ about }) => (
   <div className="about">
     <h2>{about?.title}</h2>
-    <p
+    {/* <p
       className="shadow about__text"
       dangerouslySetInnerHTML={{ __html: about?.text }}
-    />
+    /> */}
+    <BlockContent content={about?.text} classes="shadow about__text" />
   </div>
 );
 
@@ -118,7 +120,7 @@ const Services = ({ services }) => (
           services?.list
             .slice(0, 1)
             .map((service, index) => (
-              <ServiceItem service={service} key={index} />
+              <ServiceItem service={service?.text} key={index} />
             ))}
       </div>
       <div className="list-row">
@@ -126,7 +128,7 @@ const Services = ({ services }) => (
           services?.list
             .slice(1, 3)
             .map((service, index) => (
-              <ServiceItem service={service} key={index} />
+              <ServiceItem service={service?.text} key={index} />
             ))}
       </div>
       <div className="list-row">
@@ -134,7 +136,7 @@ const Services = ({ services }) => (
           services?.list
             .slice(3, 6)
             .map((service, index) => (
-              <ServiceItem service={service} key={index} />
+              <ServiceItem service={service?.text} key={index} />
             ))}
       </div>
       <div className="list-row">
@@ -142,7 +144,7 @@ const Services = ({ services }) => (
           services?.list
             .slice(6, 8)
             .map((service, index) => (
-              <ServiceItem service={service} key={index} />
+              <ServiceItem service={service?.text} key={index} />
             ))}
       </div>
       <div className="list-row">
@@ -150,7 +152,7 @@ const Services = ({ services }) => (
           services?.list
             .slice(8)
             .map((service, index) => (
-              <ServiceItem service={service} key={index} />
+              <ServiceItem service={service?.text} key={index} />
             ))}
       </div>
     </div>

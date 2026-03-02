@@ -1,0 +1,32 @@
+.services-page {
+  .contact-button {
+    position: fixed;
+    bottom: EM(110);
+    right: EM(110);
+    width: EM(96);
+    height: EM(96);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+
+    transition: opacity 0.3s ease;
+
+    @include hover {
+      opacity: 0.8;
+    }
+
+    @include mq() {
+      right: EM(34);
+      bottom: EM(94);
+      width: EM(70);
+      height: EM(70);
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

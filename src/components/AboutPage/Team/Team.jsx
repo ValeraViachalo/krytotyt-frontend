@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { anim, MenuAnim, PopUpFadeInAnim } from "@/lib/helpers/anim";
 import clsx from "clsx";
 import useIsMobile from "@/lib/helpers/useIsMobile";
+import BlockContent from "@/utils/BlockContent/BlockContent";
 
 /**
  * Split the team list into rows:
@@ -111,10 +112,11 @@ export default function Team({ data }) {
                   <p>{activePopup?.name}</p>
                   <p className="shadow">{activePopup?.position}</p>
                 </div>
-                <p
+                {/* <p
                   className="description shadow"
                   dangerouslySetInnerHTML={{ __html: activePopup?.text }}
-                />
+                /> */}
+                <BlockContent content={activePopup?.text} classes="description shadow" />
               </div>
             </motion.div>
           )}

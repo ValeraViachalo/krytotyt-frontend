@@ -126,6 +126,9 @@
 
         .description {
           text-wrap: pretty;
+          p {
+            margin-bottom: 0;
+          }
         }
       }
     }

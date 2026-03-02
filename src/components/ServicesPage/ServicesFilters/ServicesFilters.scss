@@ -1,0 +1,57 @@
+.services-page {
+  .services-filter {
+    position: fixed;
+    left: 50%;
+    bottom: EM(160);
+    transform: translateX(-50%);
+
+    width: 100%;
+    max-width: EM(820);
+
+    z-index: 10;
+
+    @include mq() {
+      left: 0;
+      right: 0;
+      bottom: EM(24);
+      transform: none;
+      overflow: scroll;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none;
+    }
+
+    &-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: EM(4);
+
+      @include mq() {
+        width: max-content;
+      }
+    }
+
+    .filter-button {
+      color: $c-white;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+
+      @include mq {
+        &:nth-of-type(1) {
+          margin-left: EM(25);
+        }
+
+        &:nth-last-child(1) {
+          margin-right: EM(25);
+        }
+      }
+
+      &--active {
+        background-color: $c-white;
+        color: $c-black;
+      }
+    }
+  }
+}
