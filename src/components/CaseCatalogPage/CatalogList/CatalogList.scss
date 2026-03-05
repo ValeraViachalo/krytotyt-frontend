@@ -155,9 +155,17 @@
       &-list {
         display: flex;
         align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
         gap: EM(4);
 
+        width: 100%;
+        max-width: EM(820);
+
+        z-index: 10;
+
         @include mq() {
+          max-width: none;
           width: max-content;
         }
       }
@@ -167,16 +175,17 @@
         transition:
           background-color 0.3s ease,
           color 0.3s ease;
+        text-wrap: nowrap;
 
-          @include mq {
-            &:nth-of-type(1) {
-              margin-left: EM(25);
-            }
-
-            &:nth-last-child(1) {
-              margin-right: EM(25);
-            }
+        @include mq {
+          &:nth-of-type(1) {
+            margin-left: EM(25);
           }
+
+          &:nth-last-child(1) {
+            margin-right: EM(25);
+          }
+        }
 
         &--active {
           background-color: $c-black;
