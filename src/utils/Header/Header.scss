@@ -38,11 +38,13 @@
   }
 
   &--active {
-    &::after {
-      display: none !important;
-    }
-    &::before {
-      display: none !important;
+    @include mq() {
+      &::after {
+        display: none !important;
+      }
+      &::before {
+        display: none !important;
+      }
     }
   }
 
@@ -235,8 +237,12 @@
       .player {
         background: rgba(85, 85, 85, 0.5);
         backdrop-filter: blur(27px);
-        border-radius: 16px;
+        border-radius: EM(16);
         position: relative;
+
+        @include mq() {
+          border-radius: EM(24);
+        }
 
         &-content {
           padding: EM(16) EM(50) EM(16) EM(16);
@@ -451,8 +457,12 @@
     .player {
       background: rgba(85, 85, 85, 0.5);
       backdrop-filter: blur(27px);
-      border-radius: 16px;
+      border-radius: EM(16);
       position: relative;
+
+        @include mq() {
+          border-radius: EM(24);
+        }
 
       &-content {
         padding: EM(16) EM(50) EM(16) EM(16);

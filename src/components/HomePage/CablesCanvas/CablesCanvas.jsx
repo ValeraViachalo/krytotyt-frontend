@@ -38,7 +38,7 @@ export default function CablesCanvas({
 
     const options = {
       patch: CABLES.exportedPatch,
-      prefixAssetPath: patchDir,
+      prefixAssetPath: '/',
       jsPath: patchDir + "js/",
       glCanvasId: canvasId,
       glCanvasResizeToWindow: true,

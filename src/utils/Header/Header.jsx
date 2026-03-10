@@ -106,6 +106,7 @@ export default function Header({ locale }) {
               className={clsx("logo-wrapper", {
                 "logo-wrapper--active": isMenuActive,
               })}
+              onClick={() => setIsMenuActive(false)}
             >
               <AnimatePresence mode="sync" initial={false}>
                 <motion.img
@@ -158,10 +159,10 @@ export default function Header({ locale }) {
           </div>
           {!isMobile && (
             <div className="right">
-              <div className="radio">
+              <button className="radio" onClick={() => setIsMenuActive(!isMenuActive)}>
                 <span className="radio-indicator"></span>
                 <span>{data.radioTitle}</span>
-              </div>
+              </button>
 
               <button
                 className="header-button"
