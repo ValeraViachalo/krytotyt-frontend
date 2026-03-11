@@ -1,3 +1,8 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -12,22 +17,10 @@ const nextConfig = {
     ],
   },
   sassOptions: {
-    includePaths: ['styles'],
+    includePaths: [path.join(__dirname, 'src/styles')],
     prependData: `
-    @import '/src/styles/global';
+    @import '${path.join(__dirname, 'src/styles/global').replace(/\\/g, '/')}';
   `,
-    functions: {
-      'get($keys)': function (keys) {
-        keys = keys.getValue().split('.')
-        let result = sassVars
-        for (let i = 0; i < keys.length; i++) {
-          result = result[keys[i]]
-        }
-        result = castToSass(result)
-
-        return result
-      },
-    },
   }
 };
 
