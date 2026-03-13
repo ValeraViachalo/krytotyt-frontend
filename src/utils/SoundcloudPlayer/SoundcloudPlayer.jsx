@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useRef } from "react";
 import { useAudio } from "@/utils/AudioContext";
 import "./SoundcloudPlayer.scss";
 
@@ -8,12 +9,28 @@ const URL_PLAYLIST = "https://soundcloud.com/krytotytmusic";
 export default function SoundcloudPlayer() {
   const {
     isPlayerReady,
+    isMuted,
+    setIsMuted,
     currentTrackIndex,
     position,
     duration,
     playlistMeta,
     next,
+    seekTo,
   } = useAudio();
+
+  const progressRef = useRef(null);
+
+  const handleProgressClick = useCallback(
+    (e) => {
+      if (!duration || !progressRef.current) return;
+      const rect = progressRef.current.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (isMuted) setIsMuted(false);
+      seekTo(pct * duration);
+    },
+    [duration, seekTo, isMuted, setIsMuted]
+  );
 
   // ── Derived display values ─────────────────────────────────────────────────
   const currentTrack = playlistMeta?.tracks?.[currentTrackIndex] ?? null;
@@ -37,7 +54,15 @@ export default function SoundcloudPlayer() {
         />
         <div className="player__info">
           <span className="player__title">{displayTitle}</span>
-          <div className="player__progress">
+          <div
+            className="player__progress"
+            ref={progressRef}
+            onClick={handleProgressClick}
+            role="progressbar"
+            aria-valuenow={Math.round(progressPct)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
             <div
               className="player__progress-bar"
               style={{ width: `${progressPct}%` }}

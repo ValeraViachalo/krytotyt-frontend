@@ -6,6 +6,8 @@
 
     height: clamp(EM(800), 100svh, EM(1000));
 
+    position: relative;
+
     @include mq() {
       height: auto;
       max-height: none;
@@ -13,8 +15,7 @@
     }
 
     &-content {
-      width: calc(100% - EM(120));
-      max-width: EM(620);
+      width: EM(620);
 
       display: flex;
       flex-direction: column;
@@ -26,6 +27,7 @@
 
       @include mq() {
         gap: EM(48);
+        width: calc(100% - EM(120));
       }
 
       .services-list {
@@ -35,7 +37,7 @@
         gap: EM(40);
         margin-top: EM(36);
         flex-wrap: wrap;
-        
+
         @include mq() {
           margin-top: EM(32);
           gap: EM(12);
@@ -51,6 +53,37 @@
             height: EM(23);
           }
         }
+      }
+    }
+
+    &-buttons {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      display: flex;
+      justify-content: space-between;
+
+      width: EM(1500);
+
+       @include mq() {
+        display: none;
+      }
+    }
+
+    &__button {
+      width: EM(96);
+      height: EM(96);
+      display: block;
+
+      &--next {
+        transform: rotate(180deg);
+      }
+
+      &-icon {
+        width: 100%;
+        height: 100%;
       }
     }
   }

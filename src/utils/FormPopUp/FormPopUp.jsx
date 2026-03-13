@@ -125,7 +125,11 @@ const ContactForm = ({ formText, closeForm }) => {
         <Form className="form">
           <AnimatePresence mode="sync" initial={false}>
             {!submitted ? (
-              <motion.div {...anim(AutoHeightAnim)} className="form-content-wrapper" key="form-content">
+              <motion.div
+                {...anim(AutoHeightAnim)}
+                className="form-content-wrapper"
+                key="form-content"
+              >
                 <div className="form-content">
                   <div className="form-row">
                     <Field
@@ -191,7 +195,9 @@ const ContactForm = ({ formText, closeForm }) => {
                       />
                       <span
                         className="legal-checkbox__text shadow"
-                        dangerouslySetInnerHTML={{ __html: formText?.legalText }}
+                        dangerouslySetInnerHTML={{
+                          __html: formText?.legalText,
+                        }}
                       />
                     </label>
                     <ErrorMessage
@@ -199,13 +205,18 @@ const ContactForm = ({ formText, closeForm }) => {
                       component="div"
                       className="input__error"
                     />
-                  </div>    
+                  </div>
                 </div>
               </motion.div>
             ) : (
-              <motion.div {...anim(AutoHeightAnim)} className="form-submitted" key="submitted-message">
-
-                <p className="shadow form-submitted__title">Дякуємо! Ваше повідомлення надіслано.</p>
+              <motion.div
+                {...anim(AutoHeightAnim)}
+                className="form-submitted"
+                key="submitted-message"
+              >
+                <p className="shadow form-submitted__title">
+                  {formText?.successText}
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -213,10 +224,13 @@ const ContactForm = ({ formText, closeForm }) => {
           <button
             type={submitted ? "button" : "submit"}
             className={clsx("button form-button", {
-              "form-button--disabled": !submitted && (!isValid || !dirty || loading),
+              "form-button--disabled":
+                !submitted && (!isValid || !dirty || loading),
             })}
             disabled={!submitted && (!isValid || !dirty || loading)}
-            onClick={() => { if (submitted) closeForm(); }}
+            onClick={() => {
+              if (submitted) closeForm();
+            }}
           >
             {submitted ? formText?.button?.close : formText?.button?.default}
           </button>

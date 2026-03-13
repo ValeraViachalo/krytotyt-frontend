@@ -23,33 +23,46 @@ export const QUERY_CASES_CATALOG = `
 
 export const QUERY_CASES_DETAILS = `
 *[_type == "projectDetails" && slug.current == $slug][0]{
-  _id,
-  "name": coalesce(name[$lang], name.ua),
-  "slug": slug.current,
-  "text": coalesce(text[$lang], text.ua),
-  projectType->{
     _id,
     "name": coalesce(name[$lang], name.ua),
-    "slug": slug.current
-  },
-  services[]->{
-    _id,
-    "name": coalesce(itemName[$lang], itemName.ua),
     "slug": slug.current,
-    service->{
-      _id,
+    "text": coalesce(text[$lang], text.ua),
+    projectType->{
+      "name": coalesce(name[$lang], name.ua),
+      "slug": slug.current
+    },
+    services[]->{
+      "name": coalesce(itemName[$lang], itemName.ua),
+      "slug": slug.current,
+      service->{
+        "name": coalesce(name[$lang], name.ua),
+        "slug": slug.current
+      }
+    },
+    "images": images[]{
+      "imageUrl": image.asset->url,
+      showForCatalog
+    },
+
+    // ── Prev / Next navigation ────────────────────────────────────────────────
+    // Items are ordered by _createdAt descending (newest first), matching the
+    // catalog query order. "prev" = newer item, "next" = older item.
+    "prev": coalesce(
+      *[_type == "projectDetails" && _createdAt > ^._createdAt] | order(_createdAt asc)  [0],
+      *[_type == "projectDetails"]                               | order(_createdAt asc)  [0]
+    ) {
+      "name": coalesce(name[$lang], name.ua),
+      "slug": slug.current
+    },
+    "next": coalesce(
+      *[_type == "projectDetails" && _createdAt < ^._createdAt] | order(_createdAt desc) [0],
+      *[_type == "projectDetails"]                               | order(_createdAt desc) [0]
+    ) {
       "name": coalesce(name[$lang], name.ua),
       "slug": slug.current
     }
-  },
-  images[]{
-    "imageUrl": image.asset->url,
-    "width": image.asset->metadata.dimensions.width,
-    "height": image.asset->metadata.dimensions.height,
-    showForCatalog
   }
-}
-  `;
+`;
 
 export const QUERY_PRIVACY_PAGE = `
 *[_type == "privacyPolicy"][0]{
@@ -71,7 +84,7 @@ export const QUERY_SERVICES_PAGE = `
     "slug": slug.current
   }
 }
-}`
+}`;
 
 export const QUERY_ABOUT_PAGE = `
 *[_type == "about" && _id == "about"][0]{
@@ -116,3 +129,13 @@ export const QUERY_ABOUT_PAGE = `
     }
   }
 `;
+
+export const QUERY_HEADER = `
+  *[_type == "header" && _id == "header"][0]{
+    "socials": socials[]{
+      name,
+      "image": image.asset->url,
+      url
+    }
+  }
+`

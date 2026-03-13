@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 import "./Header.scss";
 import Link from "next/link";
-import Image from "next/image";
 import clsx from "clsx";
 import useIsMobile from "@/lib/helpers/useIsMobile";
 import { AnimatePresence, motion } from "framer-motion";
@@ -12,7 +11,7 @@ import { usePathname } from "next/navigation";
 import SoundcloudPlayer from "../SoundcloudPlayer/SoundcloudPlayer";
 import { useAudio } from "@/utils/AudioContext";
 
-const data = {
+const staticData = {
   nav: [
     {
       title: "про нас",
@@ -28,23 +27,10 @@ const data = {
     },
   ],
   radioTitle: "радіо",
-  socials: [
-    {
-      icon: "/assets/socials/instagram.svg",
-      href: "https://www.instagram.com/krytotyt/",
-    },
-    {
-      icon: "/assets/socials/youtube.svg",
-      href: "https://www.youtube.com/@KrytotytMusicLive",
-    },
-    {
-      icon: "/assets/socials/facebook.svg",
-      href: "https://www.facebook.com/krytotyt",
-    },
-  ],
 };
 
-export default function Header({ locale }) {
+export default function Header({ locale, headerData }) {
+  const socials = headerData?.socials ?? [];
   const [activeLogo, setActiveLogo] = useState(1);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const { isMuted, setIsMuted, isPlayerReady } = useAudio();
@@ -96,9 +82,12 @@ export default function Header({ locale }) {
 
   return (
     <>
-      <header ref={headerRef} className={clsx("header", {
-        "header--active": isMenuActive,
-      })}>
+      <header
+        ref={headerRef}
+        className={clsx("header", {
+          "header--active": isMenuActive,
+        })}
+      >
         <div className="header-content">
           <div className="left">
             <Link
@@ -134,7 +123,7 @@ export default function Header({ locale }) {
             </Link>
 
             <div className="nav">
-              {data.nav.map((item, index) => (
+              {staticData.nav.map((item, index) => (
                 <Link
                   key={index}
                   href={item.href}
@@ -159,9 +148,12 @@ export default function Header({ locale }) {
           </div>
           {!isMobile && (
             <div className="right">
-              <button className="radio" onClick={() => setIsMenuActive(!isMenuActive)}>
+              <button
+                className="radio"
+                onClick={() => setIsMenuActive(!isMenuActive)}
+              >
                 <span className="radio-indicator"></span>
-                <span>{data.radioTitle}</span>
+                <span>{staticData.radioTitle}</span>
               </button>
 
               <button
@@ -244,38 +236,41 @@ export default function Header({ locale }) {
               >
                 <SoundcloudPlayer />
                 <div className="bottom">
-                  <div className="lang-switch">
-                    <Link
-                      href="/"
-                      className={clsx("lang-switch__link", {
-                        "lang-switch__link--active": locale === "ua",
-                      })}
-                    >
-                      <span>укр</span>
-                    </Link>
-                    <Link
-                      href="/en"
-                      className={clsx("lang-switch__link", {
-                        "lang-switch__link--active": locale === "en",
-                      })}
-                    >
-                      <span>eng</span>
-                    </Link>
-                  </div>
+                  {/* hidden for now */}
+                  {false && (
+                    <div className="lang-switch">
+                      <Link
+                        href="/"
+                        className={clsx("lang-switch__link", {
+                          "lang-switch__link--active": locale === "ua",
+                        })}
+                      >
+                        <span>укр</span>
+                      </Link>
+                      <Link
+                        href="/en"
+                        className={clsx("lang-switch__link", {
+                          "lang-switch__link--active": locale === "en",
+                        })}
+                      >
+                        <span>eng</span>
+                      </Link>
+                    </div>
+                  )}
 
                   <div className="socials">
-                    {data.socials.map((item, index) => (
+                    {socials.map((item, index) => (
                       <Link
                         key={index}
-                        href={item.href}
+                        href={item.url}
                         target="_blank"
                         className="socials__link"
                       >
-                        <Image
-                          src={item.icon}
+                        <img
+                          src={item.image}
                           width={22}
                           height={22}
-                          alt="Social Icon"
+                          alt={item.name || "Social Icon"}
                           className="socials__link-icon"
                         />
                       </Link>
@@ -289,11 +284,15 @@ export default function Header({ locale }) {
       </header>
       <AnimatePresence mode="wait">
         {isMobile && isMenuActive && (
-          <motion.div ref={mobileMenuRef} {...anim(MenuAnim)} className="mobile-menu">
+          <motion.div
+            ref={mobileMenuRef}
+            {...anim(MenuAnim)}
+            className="mobile-menu"
+          >
             <div className="mobile-menu-content">
               <div className="nav-wrapper">
                 <div className="nav">
-                  {data.nav.map((item, index) => (
+                  {staticData.nav.map((item, index) => (
                     <Link
                       key={index}
                       href={item.href}
@@ -313,7 +312,7 @@ export default function Header({ locale }) {
                 <div className="top">
                   <div className="radio">
                     <span className="radio-indicator"></span>
-                    <span>{data.radioTitle}</span>
+                    <span>{staticData.radioTitle}</span>
                   </div>
 
                   <button
@@ -354,38 +353,40 @@ export default function Header({ locale }) {
                 </div>
                 <SoundcloudPlayer />
                 <div className="bottom">
-                  <div className="lang-switch">
-                    <Link
-                      href="/"
-                      className={clsx("lang-switch__link", {
-                        "lang-switch__link--active": locale === "ua",
-                      })}
-                    >
-                      <span>укр</span>
-                    </Link>
-                    <Link
-                      href="/en"
-                      className={clsx("lang-switch__link", {
-                        "lang-switch__link--active": locale === "en",
-                      })}
-                    >
-                      <span>eng</span>
-                    </Link>
-                  </div>
+                  {false && (
+                    <div className="lang-switch">
+                      <Link
+                        href="/"
+                        className={clsx("lang-switch__link", {
+                          "lang-switch__link--active": locale === "ua",
+                        })}
+                      >
+                        <span>укр</span>
+                      </Link>
+                      <Link
+                        href="/en"
+                        className={clsx("lang-switch__link", {
+                          "lang-switch__link--active": locale === "en",
+                        })}
+                      >
+                        <span>eng</span>
+                      </Link>
+                    </div>
+                  )}
 
                   <div className="socials">
-                    {data.socials.map((item, index) => (
+                    {socials.map((item, index) => (
                       <Link
                         key={index}
-                        href={item.href}
+                        href={item.url}
                         target="_blank"
                         className="socials__link"
                       >
-                        <Image
-                          src={item.icon}
+                        <img
+                          src={item.image}
                           width={22}
                           height={22}
-                          alt="Social Icon"
+                          alt={item.name || "Social Icon"}
                           className="socials__link-icon"
                         />
                       </Link>

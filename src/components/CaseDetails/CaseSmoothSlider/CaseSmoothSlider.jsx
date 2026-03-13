@@ -35,6 +35,7 @@ export function useSmooothy(config) {
 
 export default function CaseSmoothSlider({ data }) {
   const imageRefs = useRef([]);
+  const loadedCount = useRef(0);
   const isMobile = useIsMobile();  
 
   const { ref, slider } = useSmooothy({
@@ -58,6 +59,21 @@ export default function CaseSmoothSlider({ data }) {
     },
   });
 
+  // Resize slider once all images have loaded so sizes are correct
+  const handleImageLoad = () => {
+    loadedCount.current += 1;
+    if (loadedCount.current >= data.length && slider) {
+      slider.resize();
+    }
+  };
+
+  // Also resize after a short delay as a safety net (e.g. cached images)
+  useEffect(() => {
+    if (!slider) return;
+    const id = setTimeout(() => slider.resize(), 100);
+    return () => clearTimeout(id);
+  }, [slider]);
+
   return (
     <div className="case-slider">
       <div className="smooth-slider" ref={ref}>
@@ -71,6 +87,7 @@ export default function CaseSmoothSlider({ data }) {
                 src={slide?.imageUrl}
                 alt={`Slide ${i}`}
                 className="smooth-slider__slide-image"
+                onLoad={handleImageLoad}
                 style={{ 
                   aspectRatio: `${slide?.width} / ${slide?.height}`,
                 }}

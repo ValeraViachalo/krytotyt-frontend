@@ -116,6 +116,7 @@
       background-color: $c-green-100;
       color: $c-black;
       margin-top: EM(57);
+      backdrop-filter: none;
 
       @include mq() {
         margin-top: EM(48);
@@ -136,7 +137,6 @@
         pointer-events: auto;
         background-color: $c-green-100;
         color: $c-black;
-
       }
     }
 

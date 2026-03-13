@@ -14,6 +14,8 @@
       grid-template-columns: repeat(6, EM(137));
       justify-content: space-between;
       row-gap: EM(40);
+      max-width: var(--size-container);
+      margin: 0 auto;
 
       @include mq() {
         display: flex;

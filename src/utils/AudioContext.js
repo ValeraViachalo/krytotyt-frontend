@@ -138,6 +138,7 @@ export function AudioProvider({ children }) {
   const next = useCallback(() => widgetRef.current?.next(), []);
   const prev = useCallback(() => widgetRef.current?.prev(), []);
   const toggle = useCallback(() => widgetRef.current?.toggle(), []);
+  const seekTo = useCallback((ms) => widgetRef.current?.seekTo(ms), []);
 
   return (
     <AudioContext.Provider
@@ -153,6 +154,7 @@ export function AudioProvider({ children }) {
         next,
         prev,
         toggle,
+        seekTo,
       }}
     >
       {children}

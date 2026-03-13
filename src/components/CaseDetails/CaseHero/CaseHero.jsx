@@ -2,14 +2,48 @@ import React from "react";
 
 import "./CaseHero.scss";
 import BlockContent from "@/utils/BlockContent/BlockContent";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function CaseHero({ data }) {
   return (
     <section className="case-hero container">
+      <div className="case-hero-buttons">
+        {data?.next && (
+          <Link
+            href={data?.next?.slug}
+            className="case-hero__button case-hero__button--next"
+          >
+            <Image
+              src="/assets/icon/arrow-bg.svg"
+              alt="Next case"
+              width={96}
+              height={96}
+              className="case-hero__button-icon"
+            />
+          </Link>
+        )}
+
+        {data?.prev && (
+          <Link
+            href={data?.prev?.slug}
+            className="case-hero__button case-hero__button--prev"
+          >
+            <Image
+              src="/assets/icon/arrow-bg.svg"
+              alt="Previous case"
+              width={96}
+              height={96}
+              className="case-hero__button-icon"
+            />
+          </Link>
+        )}
+      </div>
+
       <div className="case-hero-content">
         <h2>{data?.name}</h2>
         <div className="bottom">
-          <BlockContent content={data?.text} className="shadow" />
+          <BlockContent content={data?.text} classes="shadow" />
           <div className="services-list">
             {data?.services?.map((service, i) => (
               <div key={i} className="service">

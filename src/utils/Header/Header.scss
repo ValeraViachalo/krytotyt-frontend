@@ -15,7 +15,7 @@
   &::before {
     content: "";
     position: absolute;
-    inset: EM(-100) 0 EM(-50);
+    inset: EM(-100) EM(-100) EM(-50);
 
     z-index: -1;
     pointer-events: none;
@@ -225,13 +225,20 @@
       top: calc(100% + EM(15));
       right: 0;
 
-      opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+
+      // Animate children individually to preserve their backdrop-filter
+      > * {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
 
       &--active {
-        opacity: 1;
         pointer-events: auto;
+
+        > * {
+          opacity: 1;
+        }
       }
 
       .player {

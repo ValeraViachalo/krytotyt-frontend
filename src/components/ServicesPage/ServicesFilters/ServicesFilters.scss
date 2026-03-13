@@ -6,7 +6,7 @@
     transform: translateX(-50%);
 
     width: 100%;
-    max-width: EM(820);
+    max-width: EM(840);
 
     z-index: 10;
 
@@ -51,6 +51,30 @@
       &--active {
         background-color: $c-white;
         color: $c-black;
+      }
+
+      &--reset {
+        padding: EM(12);
+        pointer-events: none;
+
+        &-active {
+          pointer-events: auto;
+          .filter-button__icon {
+            path {
+              fill: $c-white;
+            }
+          }
+        }
+      }
+
+      &__icon {
+        width: EM(26);
+        height: EM(26);
+
+        path {
+          fill: $g-40;
+          transition: fill 0.3s ease;
+        }
       }
     }
   }
