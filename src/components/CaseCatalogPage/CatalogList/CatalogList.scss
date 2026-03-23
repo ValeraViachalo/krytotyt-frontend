@@ -39,14 +39,6 @@
         opacity: 0.2;
       }
 
-      &--active {
-        .catalog-item__image {
-          img {
-            transform: scale(1.05);
-          }
-        }
-      }
-
       &-scroll {
         @include mq() {
           overflow: scroll;

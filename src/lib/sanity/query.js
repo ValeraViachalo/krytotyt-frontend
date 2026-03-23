@@ -14,7 +14,6 @@ export const QUERY_CASES_CATALOG = `
     }[showForCatalog == true]
   },
   "projectTypes": *[_type == "projectType"]{
-    _id,
     "name": coalesce(name[$lang], name.ua),
     "slug": slug.current
   }

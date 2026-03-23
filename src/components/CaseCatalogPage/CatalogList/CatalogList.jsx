@@ -13,7 +13,6 @@ const preparedResetButtonText = {
 };
 
 export default function CatalogList({ data }) {
-  // console.log("CatalogList data:", data);
   const [activeFilter, setActiveFilter] = useState("all");
   const [activeCase, setActiveCase] = useState(null);
 

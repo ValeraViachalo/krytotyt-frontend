@@ -34,8 +34,10 @@ export function useSmooothy(config) {
 /** component */
 
 export default function CaseSmoothSlider({ data }) {
-  const imageRefs = useRef([]);
+  const slideRefs = useRef([]);
+  const containerRef = useRef(null);
   const loadedCount = useRef(0);
+  const [allLoaded, setAllLoaded] = useState(false);
   const isMobile = useIsMobile();  
 
   const { ref, slider } = useSmooothy({
@@ -44,26 +46,79 @@ export default function CaseSmoothSlider({ data }) {
     scrollSensitivity: 0.2,
     dragSensitivity: 0.2,
     onUpdate: () => {
-      const viewportCenter = window.innerWidth / 2;
-      imageRefs.current.forEach((el) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const elCenter = rect.left + rect.width / 2;
-        const diff = elCenter - viewportCenter;
-        const t = Math.min(Math.abs(diff) / viewportCenter, 1);
-        const sign = diff > 0 ? -1 : 1;
-        const scale = 1 - t * 0.15; // 1 at center → 0.8 at edges
-        const x = sign * t * 5; // pushes toward center from both sides
-        gsap.set(el, { scale, xPercent: x });
+      const slides = slideRefs.current.filter(Boolean);
+      if (slides.length === 0) return;
+
+      const maxScale = 1.5;
+      const G = 16; // gap between slides
+      const cRect = containerRef.current?.getBoundingClientRect();
+      if (!cRect) return;
+      const centerX = cRect.left + cRect.width / 2;
+      const maxDist = cRect.width * 0.7;
+
+      const items = slides.map((slide) => {
+        const inner = slide.querySelector(".smooth-slider__slide-inner");
+        const r = slide.getBoundingClientRect();
+        const W = r.width;
+        const cx = r.left + W / 2;
+        const dist = Math.abs(cx - centerX);
+        const lin = Math.max(0, 1 - dist / maxDist);
+        const t = lin * lin * (3 - 2 * lin); // smoothstep
+        const scale = 1 + (maxScale - 1) * t;
+        return { inner, W, cx, scale };
       });
+
+      const sorted = [...items].sort((a, b) => a.cx - b.cx);
+      if (sorted.length < 2) {
+        if (sorted[0])
+          gsap.set(sorted[0].inner, { scale: sorted[0].scale, x: 0 });
+        return;
+      }
+
+      // Accumulate x-offsets to account for scaled sizes
+      sorted[0].tx = 0;
+      for (let i = 1; i < sorted.length; i++) {
+        const p = sorted[i - 1],
+          c = sorted[i];
+        c.tx =
+          p.tx +
+          G -
+          (p.W + c.W) / 2 +
+          (p.scale * (p.W - G)) / 2 +
+          (c.scale * (c.W - G)) / 2;
+      }
+
+      // Find the offset at the viewport center and re-center
+      let txAtCenter = 0;
+      const last = sorted[sorted.length - 1];
+      if (last.cx <= centerX) {
+        txAtCenter = last.tx;
+      } else if (sorted[0].cx >= centerX) {
+        txAtCenter = sorted[0].tx;
+      } else {
+        for (let i = 0; i < sorted.length - 1; i++) {
+          if (sorted[i].cx <= centerX && sorted[i + 1].cx >= centerX) {
+            const L = sorted[i],
+              R = sorted[i + 1];
+            const frac = (centerX - L.cx) / (R.cx - L.cx);
+            txAtCenter = L.tx + (R.tx - L.tx) * frac;
+            break;
+          }
+        }
+      }
+
+      for (const d of sorted) {
+        gsap.set(d.inner, { scale: d.scale, x: d.tx - txAtCenter });
+      }
     },
   });
 
   // Resize slider once all images have loaded so sizes are correct
   const handleImageLoad = () => {
     loadedCount.current += 1;
-    if (loadedCount.current >= data.length && slider) {
-      slider.resize();
+    if (loadedCount.current >= data.length) {
+      if (slider) slider.resize();
+      setAllLoaded(true);
     }
   };
 
@@ -75,15 +130,15 @@ export default function CaseSmoothSlider({ data }) {
   }, [slider]);
 
   return (
-    <div className="case-slider">
-      <div className="smooth-slider" ref={ref}>
+    <div className={`case-slider${allLoaded ? ' is-loaded' : ''}`}>
+      <div className="smooth-slider" ref={(node) => { ref(node); containerRef.current = node; }}>
         {data.map((slide, i) => (
           <div key={i} className="smooth-slider__slide"
+            ref={(el) => (slideRefs.current[i] = el)}
             onClick={() => slider.goToIndex(i)}
           >
             <div className="smooth-slider__slide-inner">
               <img
-                ref={(el) => (imageRefs.current[i] = el)}
                 src={slide?.imageUrl}
                 alt={`Slide ${i}`}
                 className="smooth-slider__slide-image"

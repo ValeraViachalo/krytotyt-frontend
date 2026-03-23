@@ -6,6 +6,12 @@
   gap: EM(80);
 
   position: relative;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+
+  &.is-loaded {
+    opacity: 1;
+  }
 
   @include mq() {
     gap: EM(40);
@@ -14,12 +20,12 @@
 
   .smooth-slider {
     display: flex;
+    align-items: center;
     width: 100%;
     height: EM(500);
     max-width: EM(1920);
     overflow: hidden;
-    padding-top: EM(24);
-    padding-bottom: EM(64);
+    padding: EM(64) 0;
 
     margin: 0 auto;
 
@@ -39,13 +45,13 @@
       flex-shrink: 0;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
 
       // width: auto;
-      height: EM(560);
+      height: EM(360);
+      // height: EM(560);
 
       @include mq {
-        width: EM(320);
+        width: EM(230);
         height: auto;
       }
     }
@@ -66,9 +72,9 @@
         height: 100%;
 
         @include mq {
-          width: EM(320);
+          width: EM(220);
           height: auto;
-          max-height: EM(400);
+          max-height: EM(320);
         }
       }
     }
