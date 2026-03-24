@@ -2,6 +2,7 @@
 
 import React, { useContext, useState } from "react";
 import ServicesFilters from "./ServicesFilters/ServicesFilters";
+import ServicesMap from "./ServicesMap/ServicesMap";
 
 import "./ServicesPage.scss";
 import { FormPopUpContext } from "@/utils/FormPopUp/context";
@@ -15,6 +16,11 @@ export default function ServicesPage({ data }) {
 
   return (
     <main className="services-page">
+      <ServicesMap
+        activeFilter={activeFilter}
+        onFilterChange={handleFilterChange}
+      />
+
       <ServicesFilters
         data={data?.list}
         activeFilter={activeFilter}

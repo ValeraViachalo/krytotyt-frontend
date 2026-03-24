@@ -2,6 +2,7 @@ import React from "react";
 
 import "./ServicesFilters.scss";
 import clsx from "clsx";
+import { categories } from "../ServicesMap/data";
 
 const preparedResetButtonText = {
   ua: {
@@ -11,7 +12,6 @@ const preparedResetButtonText = {
 };
 
 export default function ServicesFilters({
-  data,
   activeFilter,
   onFilterChange,
 }) {
@@ -25,12 +25,12 @@ export default function ServicesFilters({
           isActiveFilter={activeFilter === resetButtonText.slug}
           handleFilterChange={() => onFilterChange(resetButtonText.slug)}
         />
-        {data?.map((filter, index) => (
+        {categories.map((cat) => (
           <FilterButton
-            key={index}
-            filter={filter}
-            isActiveFilter={activeFilter === filter.slug}
-            handleFilterChange={() => onFilterChange(filter.slug)}
+            key={cat.id}
+            filter={{ name: cat.title, slug: cat.slug }}
+            isActiveFilter={activeFilter === cat.slug}
+            handleFilterChange={() => onFilterChange(cat.slug)}
           />
         ))}
         <button
