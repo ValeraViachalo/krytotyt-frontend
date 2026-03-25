@@ -1,0 +1,583 @@
+[
+    {
+        "_id": "jPiOZwflduvgIzRX0ts4FA",
+        "list": [
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGfKk",
+                "name": "креативний дизайн",
+                "slug": "kreativnyy-dizajn"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4V7P",
+                "name": "декор",
+                "slug": "dekor"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGuCy",
+                "name": "сценічні конструкції",
+                "slug": "stsenichni-konstruktsiyi"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trx79",
+                "name": "інсталяції в заклади",
+                "slug": "instalyatsiyi-v-zaklady"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4VY1",
+                "name": "оформлення сцен",
+                "slug": "oformlennya-stsen"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4VeP",
+                "name": "оформлення фестивалів",
+                "slug": "oformlennya-festyvaliv"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tryCe",
+                "name": "креативна реалізація",
+                "slug": "kreatyvna-realizatsiya"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGwi2",
+                "name": "монтаж інсталяцій",
+                "slug": "montazh-instalyatsiy"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGxQv",
+                "name": "дзеркала",
+                "slug": "dzerkala"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4YJP",
+                "name": "музичні події",
+                "slug": "muzychni-podiyi"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4YWB",
+                "name": "світло",
+                "slug": "svitlo"
+            }
+        ],
+        "name": "арт-інсталяції",
+        "slug": "art-instalyatsiyi"
+    },
+    {
+        "_id": "Sq5ehhWVu41pkCZ6jEHWBV",
+        "list": [
+            {
+                "_id": "jPiOZwflduvgIzRX0tsG78",
+                "name": "меблеві каркаси",
+                "slug": "meblevi-karkasy"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4ac3",
+                "name": "вироби із заліза",
+                "slug": "vyroby-iz-zaliza"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4akZ",
+                "name": "гнуті меблі із металу",
+                "slug": "hnuti-mebli-iz-metalu"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHQmt",
+                "name": "металеві конструкції",
+                "slug": "metalevi-konstruktsiyi"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsQP7",
+                "name": "інтер'єрний метал",
+                "slug": "internyy-metal"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHRqB",
+                "name": "металодерев'яні конструкції",
+                "slug": "metaloderevyani-konstrukciji"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsR2J",
+                "name": "зварні конструкції",
+                "slug": "zvarni-konstruktsiyi"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4bQ5",
+                "name": "металеві опори",
+                "slug": "metalevi-opory"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsRb9",
+                "name": "меблі з металу",
+                "slug": "mebli-z-metalu"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsTur",
+                "name": "перегородки",
+                "slug": "perehorodky"
+            }
+        ],
+        "name": "вироби з металу",
+        "slug": "vyroby-z-metalu"
+    },
+    {
+        "_id": "1JVvTYtqELcegmWuGK4f4p",
+        "list": [
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHZPS",
+                "name": "арт-інсталяції",
+                "slug": "art-instalyatsiyi"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4dKF",
+                "name": "креативний дизайн",
+                "slug": "kreativnyy-dizajn"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4dVx",
+                "name": "устаткування",
+                "slug": "ustatkuvannya"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4dgb",
+                "name": "декор",
+                "slug": "dekor"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHavJ",
+                "name": "простір як мистецтво",
+                "slug": "prostir-yak-mystetstvo"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4dwZ",
+                "name": "крафтові вироби",
+                "slug": "kraftovi-vyroby"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsZbb",
+                "name": "авторські меблі",
+                "slug": "avtorski-mebli"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4e2x",
+                "name": "столярні вироби",
+                "slug": "stolyarni-vyroby"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHcxo",
+                "name": "дерев'яні панелі",
+                "slug": "derevyani-paneli"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHdUS",
+                "name": "шпон",
+                "slug": "shpon"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsaGy",
+                "name": "індивідуальне проєктування",
+                "slug": "individualne-proyektuvannya"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsaYO",
+                "name": "меблеві композиції",
+                "slug": "meblevi-kompozytsiyi"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4eQN",
+                "name": "стінові панелі",
+                "slug": "stinovi-paneli"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4eWl",
+                "name": "фрезеровані поверхні",
+                "slug": "frezerovani-poverhni"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHf0J",
+                "name": "конструктивні рішення",
+                "slug": "konstruktyvni-resheniya"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHfnH",
+                "name": "слеби",
+                "slug": "sleby"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4ewJ",
+                "name": "світильники",
+                "slug": "svitylnyky"
+            }
+        ],
+        "name": "декорування",
+        "slug": "dekoruvannya"
+    },
+    {
+        "_id": "1JVvTYtqELcegmWuGK3sIX",
+        "list": [
+            {
+                "_id": "jPiOZwflduvgIzRX0tqcyA",
+                "name": "авторський нагляд",
+                "slug": "avtorskiy-naglyad"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3imn",
+                "name": "інтер'єрні рішення",
+                "slug": "interernye-resheniya"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tqepZ",
+                "name": "дизайн-проєкти",
+                "slug": "dizajn-proyekty"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3jZl",
+                "name": "зонування простору",
+                "slug": "zonuvannya-prostoru"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tqgcc",
+                "name": "креативний дизайн",
+                "slug": "kreativnyy-dizajn"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3jxB",
+                "name": "комплектація",
+                "slug": "komplektaciya"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEEP8y",
+                "name": "функціональний дизайн",
+                "slug": "funkcionalnyy-dizajn"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tqhML",
+                "name": "індивідуальне проєктування",
+                "slug": "individualne-proyektuvannya"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3kch",
+                "name": "музичні простори",
+                "slug": "muzychni-prostory"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tqi1i",
+                "name": "конструктивні рішення",
+                "slug": "konstruktyvni-resheniya"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3qoz",
+                "name": "інтер'єрний метал",
+                "slug": "internyy-metal"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEEUbf",
+                "name": "дизайн кафе",
+                "slug": "dizajn-kafe"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3r0h",
+                "name": "дизайн HoReCa",
+                "slug": "dizajn-horeca"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3r89",
+                "name": "дизайн квартир",
+                "slug": "dizajn-kvartyr"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tqjze",
+                "name": "дизайн офісів",
+                "slug": "dizajn-ofisiv"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3rat",
+                "name": "дизайн ресторанів",
+                "slug": "dizajn-restorativ"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEEsd6",
+                "name": "реалізація дизайн-проєктів",
+                "slug": "realizaciya-dizajn-proyektiv"
+            }
+        ],
+        "name": "дизайн інтер'єру",
+        "slug": "dizajn-interieru"
+    },
+    {
+        "_id": "jPiOZwflduvgIzRX0trWun",
+        "list": [
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEFpfR",
+                "name": "проєктування",
+                "slug": "proyektuvannya"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trAc8",
+                "name": "виробництво",
+                "slug": "vyrobnycztvo"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3xbT",
+                "name": "конструювання",
+                "slug": "konstruyuvannya"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3yCj",
+                "name": "ексклюзивні меблі",
+                "slug": "eksklyuzyvni-mebli"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trBJg",
+                "name": "вбудовані меблі",
+                "slug": "vbudovani-mebli"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3yjj",
+                "name": "столярні вироби",
+                "slug": "stolyarni-vyroby"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEFsxT",
+                "name": "дерев'яні панелі",
+                "slug": "derevyani-paneli"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEG58O",
+                "name": "шпон",
+                "slug": "shpon"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEG5Oi",
+                "name": "вбудовані шафи",
+                "slug": "vbudovani-shafi"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK3ziP",
+                "name": "гардеробні системи",
+                "slug": "garderobnye-sistemy"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trQF5",
+                "name": "колонна система",
+                "slug": "kolonna-systema"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEG6Nv",
+                "name": "система для зберігання",
+                "slug": "systema-dlya-zberigannya"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGJHj",
+                "name": "індивідуальне проєктування",
+                "slug": "individualne-proyektuvannya"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trQwd",
+                "name": "меблі для музикантів",
+                "slug": "mebli-dlya-muzykantiv"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK40rj",
+                "name": "стійки для вінілу",
+                "slug": "stijky-dlya-vinilu"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK45D3",
+                "name": "тумби для вінілу",
+                "slug": "tumby-dlya-vinilu"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGKvk",
+                "name": "модульні меблі",
+                "slug": "modulni-mebli"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGLii",
+                "name": "інтегровані меблі",
+                "slug": "integrovani-mebli"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK45aT",
+                "name": "фрезеровані поверхні",
+                "slug": "frezerovani-poverhni"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK45sZ",
+                "name": "меблеві вузли",
+                "slug": "meblevi-vuzly"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trTGL",
+                "name": "конструктивні рішення",
+                "slug": "konstruktyvni-resheniya"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trTvi",
+                "name": "меблеві каркаси",
+                "slug": "meblevi-karkasy"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGOoV",
+                "name": "кухні",
+                "slug": "kuhni"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trV3O",
+                "name": "меблі спальні",
+                "slug": "mebli-spalni"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trVId",
+                "name": "ванні кімнати",
+                "slug": "vanni-kimnaty"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGQGH",
+                "name": "приховані меблі",
+                "slug": "pryhhovani-mebli"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trVy0",
+                "name": "офіси",
+                "slug": "ofisy"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEGQmv",
+                "name": "спортивні зали",
+                "slug": "sportyvni-zaly"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0trWFQ",
+                "name": "м'які меблі",
+                "slug": "myaki-mebli"
+            }
+        ],
+        "name": "меблі",
+        "slug": "mebli"
+    },
+    {
+        "_id": "jPiOZwflduvgIzRX0tsoOI",
+        "list": [
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHuzu",
+                "name": "музичні простори",
+                "slug": "muzychni-prostory"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHvin",
+                "name": "меблі для музикантів",
+                "slug": "mebli-dlya-muzykantiv"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4kj3",
+                "name": "стійки для вінілу",
+                "slug": "stijky-dlya-vinilu"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHwm5",
+                "name": "тумби для вінілу",
+                "slug": "tumby-dlya-vinilu"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsmB7",
+                "name": "сценічні конструкції",
+                "slug": "stsenichni-konstruktsiyi"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsmSX",
+                "name": "оформлення фестивалів",
+                "slug": "oformlennya-festyvaliv"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4l2D",
+                "name": "декорування івентів",
+                "slug": "dekoruvannya-iventiv"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsn1N",
+                "name": "мерч",
+                "slug": "merch"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsnY2",
+                "name": "запис сетів",
+                "slug": "zapys-setiv"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4lW1",
+                "name": "школа діджеїнгу",
+                "slug": "shkola-didzheyingu"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsnnH",
+                "name": "музична студія",
+                "slug": "muzychna-studiya"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsoFa",
+                "name": "джеми",
+                "slug": "dzhemy"
+            }
+        ],
+        "name": "музика",
+        "slug": "muzyka"
+    },
+    {
+        "_id": "jPiOZwflduvgIzRX0tsjRH",
+        "list": [
+            {
+                "_id": "1JVvTYtqELcegmWuGK4iBV",
+                "name": "двері прихованого монтажу",
+                "slug": "dveri-prykhovanogo-montazhu"
+            },
+            {
+                "_id": "Sq5ehhWVu41pkCZ6jEHpP3",
+                "name": "плінтус прихованого монтажу",
+                "slug": "plintus-prykhovanogo-montazhu"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tshRA",
+                "name": "розсувні двері",
+                "slug": "rozsuvni-dveri"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tshxp",
+                "name": "розсівні перегородки",
+                "slug": "rosivni-perehorodky"
+            },
+            {
+                "_id": "1JVvTYtqELcegmWuGK4iyT",
+                "name": "приховані люки",
+                "slug": "prykhovani-lyuky"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsidC",
+                "name": "приховані системи",
+                "slug": "prykhovani-systemy"
+            },
+            {
+                "_id": "jPiOZwflduvgIzRX0tsj3K",
+                "name": "розсувні системи",
+                "slug": "rozsuvni-systemy"
+            }
+        ],
+        "name": "приховані і розсувні системи",
+        "slug": "prykhovani-i-rozsuvni-systemy"
+    },
+    {
+        "_id": "a0ee3461-b657-492f-ad79-a0ca504beecb",
+        "list": [
+            {
+                "_id": "d2ee43aa-220d-41e3-ad07-91ae01c3ad9d",
+                "name": "зонування простору",
+                "slug": "zonuvannya-prostory"
+            },
+            {
+                "_id": "f34ead4d-e705-425b-b5a9-76c9bbeee6a0",
+                "name": "зонування простору",
+                "slug": "zonuvannya-prostoru"
+            }
+        ],
+        "name": "інженерія",
+        "slug": "inzheneriya"
+    }
+]

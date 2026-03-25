@@ -17,6 +17,7 @@ export default function ServicesPage({ data }) {
   return (
     <main className="services-page">
       <ServicesMap
+        data={data?.list}
         activeFilter={activeFilter}
         onFilterChange={handleFilterChange}
       />
