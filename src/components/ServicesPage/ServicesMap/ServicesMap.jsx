@@ -321,34 +321,44 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
     if (prevFilterRef.current === activeFilter) return;
     prevFilterRef.current = activeFilter;
 
-    if (!activeCategory || !gridItems.length) return;
+    if (!activeCategory || !categories.length) return;
 
-    /* Find the copy of this category closest to screen centre */
+    const cat = categories.find((c) => c.slug === activeCategory);
+    if (!cat) return;
+
     const s = scrollRef.current;
     const win = winRef.current;
-    const cx = win.w / 2;
-    const cy = win.h / 2;
-    let bestDist = Infinity;
-    let bestX = 0;
-    let bestY = 0;
+    const cx = win.w / 2.5;
+    const cy = win.h / 2.2;
 
-    gridItems.forEach((item, i) => {
-      if (item.catSlug !== activeCategory) return;
-      const d = itemDataRef.current[i];
-      if (!d) return;
-      const fx = item.baseX + s.current.x + d.extraX;
-      const fy = item.baseY + s.current.y + d.extraY;
-      const dist = (fx - cx) ** 2 + (fy - cy) ** 2;
-      if (dist < bestDist) {
-        bestDist = dist;
-        bestX = item.baseX + d.extraX;
-        bestY = item.baseY + d.extraY;
+    /* Category center in base tile coordinates */
+    const catBaseX = cat.position.x + worldOffset.x;
+    const catBaseY = cat.position.y + worldOffset.y;
+
+    /* Check all 9 neighbouring tile copies (3×3 around current)
+       to find which copy of this category is nearest to screen centre */
+    let bestDist = Infinity;
+    let bestX = catBaseX;
+    let bestY = catBaseY;
+
+    for (let ox = -1; ox <= 1; ox++) {
+      for (let oy = -1; oy <= 1; oy++) {
+        const tileX = catBaseX + ox * (tileSize.w / 2);
+        const tileY = catBaseY + oy * (tileSize.h / 2);
+        const screenX = tileX + s.current.x;
+        const screenY = tileY + s.current.y;
+        const dist = (screenX - cx) ** 2 + (screenY - cy) ** 2;
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestX = tileX;
+          bestY = tileY;
+        }
       }
-    });
+    }
 
     s.target.x = -bestX + cx;
     s.target.y = -bestY + cy;
-  }, [activeFilter, activeCategory, gridItems]);
+  }, [activeFilter, activeCategory, categories, worldOffset, tileSize]);
 
   /* ── Click handler (event delegation) ──────────────────────── */
   const handleClick = useCallback(

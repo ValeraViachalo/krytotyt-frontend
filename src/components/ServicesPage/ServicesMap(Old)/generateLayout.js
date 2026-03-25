@@ -10,13 +10,13 @@ const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5)); // ≈ 137.5°
 /* ── Category positions (matching data.js) ───────────────────── */
 const POSITION_MAP = {
   "dizajn-interieru":              { x: 0,      y: 0 },
-  "mebli":                         { x: -750,   y: 550 },
-  "inzheneriya":                   { x: 750,    y: 450 },
-  "art-instalyatsiyi":             { x: 550,    y: -550 },
-  "vyroby-z-metalu":               { x: -650,   y: -450 },
-  "prykhovani-i-rozsuvni-systemy": { x: 1100,   y: -100 },
-  "muzyka":                        { x: -1100,  y: 0 },
-  "dekoruvannya":                  { x: 100,    y: 600 },
+  "mebli":                         { x: -870,   y: 550 },
+  "inzheneriya":                   { x: 800,    y: 450 },
+  "art-instalyatsiyi":             { x: 600,    y: -550 },
+  "vyroby-z-metalu":               { x: -700,   y: -450 },
+  "prykhovani-i-rozsuvni-systemy": { x: 1030,   y: -80 },
+  "muzyka":                        { x: -1200,  y: 0 },
+  "dekoruvannya":                  { x: 100,    y: 670 },
 };
 
 /* Fallback: distribute unknowns on a circle */
@@ -30,8 +30,8 @@ function fallbackPosition() {
 }
 
 /* ── Item offset generation ──────────────────────────────────── */
-const BASE_RADIUS = 60;
-const RADIUS_STEP = 65;
+const BASE_RADIUS = 50;
+const RADIUS_STEP = 45;
 
 /* ── Size assignment ─────────────────────────────────────────── */
 function assignSize(index, total) {
@@ -61,8 +61,8 @@ export function generateLayout(sanityList) {
         slug: item.slug,
         size: assignSize(si, cat.list.length),
         offset: {
-          x: Math.round(Math.cos(a) * r * jitter),
-          y: Math.round(Math.sin(a) * r * jitter),
+          x: Math.round(Math.cos(a) * r * jitter * 1.8),
+          y: Math.round(Math.sin(a) * r * jitter * 0.6),
         },
       };
     });
