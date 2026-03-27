@@ -65,8 +65,7 @@ function getPopupPosition(activeIndex, rows) {
 }
 
 export default function Team({ data }) {
-  // const [activeIndex, setActiveIndex] = useState(null);
-  const [activeIndex, setActiveIndex] = useState(2);
+  const [activeIndex, setActiveIndex] = useState(null);
   const activePopup = data?.list[activeIndex];
   const isMobile = useIsMobile();
 
