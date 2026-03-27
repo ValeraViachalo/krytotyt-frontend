@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 import "./Sections.scss";
@@ -18,35 +19,36 @@ export default function Sections({ data }) {
   );
 }
 
-const AboutFooter = ({ footer }) => (
-  <div className="about-footer">
-    <h2>{footer?.title}</h2>
-    {/* <p className="shadow" dangerouslySetInnerHTML={{ __html: footer?.text }} /> */}
+const AboutFooter = ({ footer }) => {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  return (
+    <div className="about-footer">
+      <h2>{footer?.title}</h2>
+      {/* <p className="shadow" dangerouslySetInnerHTML={{ __html: footer?.text }} /> */}
 
-    <BlockContent content={footer?.text} classes="shadow" />
-    <Image
-      src="/assets/about/heart-filled.svg"
-      alt="heart icon"
-      width={250}
-      height={250}
-      className="about-footer__icon"
-    />
-    <button className="button"
-    data-scroll-anchor="#about"
-    >
+      <BlockContent content={footer?.text} classes="shadow" />
       <Image
-        src="/assets/icon/arrow-up.svg"
-        alt="arrow up icon"
-        width={16}
-        height={16}
-        className="button__icon"
+        src="/assets/about/heart-filled.svg"
+        alt="heart icon"
+        width={250}
+        height={250}
+        className="about-footer__icon"
       />
-      <span className="button__text">
-        {footer?.buttonToUp}
-      </span>
-    </button>
-  </div>
-);
+      <button className="button" onClick={scrollToTop}>
+        <Image
+          src="/assets/icon/arrow-up.svg"
+          alt="arrow up icon"
+          width={16}
+          height={16}
+          className="button__icon"
+        />
+        <span className="button__text">{footer?.buttonToUp}</span>
+      </button>
+    </div>
+  );
+};
 
 const HowItWorks = ({ howItWorks }) => (
   <div className="how-it-works">

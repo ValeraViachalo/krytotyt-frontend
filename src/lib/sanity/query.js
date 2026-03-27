@@ -8,8 +8,14 @@ export const QUERY_CASES_CATALOG = `
       "name": coalesce(projectType->name[$lang], projectType->name.ua),
       "slug": projectType->slug.current
     },
-    images[]{
+    "images": images[]{
       "imageUrl": image.asset->url,
+      "placeholder": image.asset->url + "?w=10&h=10&fit=crop",
+      "lqip": image.asset->metadata.lqip,
+            "placeholder": image.asset->url + "?w=10&h=10&fit=crop",
+      "lqip": image.asset->metadata.lqip,
+      "sizes": image.asset->metadata.dimensions { width, height },
+
       showForCatalog
     }[showForCatalog == true]
   },

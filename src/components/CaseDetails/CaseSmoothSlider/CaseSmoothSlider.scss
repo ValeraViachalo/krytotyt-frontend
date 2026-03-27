@@ -54,7 +54,7 @@
       position: relative;
       width: 100%;
       height: 100%;
-      padding: 0 EM(8);
+      padding: 0 EM(5);
 
       @include mq {
         width: EM(320);
@@ -74,30 +74,29 @@
     }
   }
 
-      .arrows {
-      display: flex;
-      align-items: center;
-      gap: EM(5);
+  .arrows {
+    display: flex;
+    align-items: center;
+    gap: EM(5);
 
-      .arrow {
-        width: EM(48);
-        height: EM(48);
+    .arrow {
+      width: EM(48);
+      height: EM(48);
 
-        transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease;
 
-        @include hover {
-          opacity: 0.8;
-        }
+      @include hover {
+        opacity: 0.8;
+      }
 
-        &--prev {
-          transform: rotate(180deg);
-        }
+      &--prev {
+        transform: rotate(180deg);
+      }
 
-        &__icon {
-          width: 100%;
-          height: 100%;
-        }
+      &__icon {
+        width: 100%;
+        height: 100%;
       }
     }
-
+  }
 }

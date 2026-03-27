@@ -21,6 +21,7 @@
     "nodemailer": "^8.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-lazy-load-image-component": "^1.6.3",
     "sass": "^1.82.0",
     "smooothy": "^0.0.35",
     "yup": "^1.7.1"

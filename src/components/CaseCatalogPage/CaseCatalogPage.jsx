@@ -2,7 +2,7 @@ import React from 'react'
 import CatalogList from './CatalogList/CatalogList'
 
 export default function CaseCatalogPage({ data }) {
-  console.log(data.projectTypes);
+  console.log(data);
   
   return (
     <main className="case-catalog page--white">

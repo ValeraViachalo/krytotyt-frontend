@@ -64,31 +64,31 @@
       &--left-top {
         left: 0%;
         top: 0%;
-        transform: translate(-105%, 0%);
+        transform: translate(-85%, 0%);
       }
 
       // Popup on the LEFT side, pointing down
       &--left-bottom {
         left: 0%;
         bottom: 0%;
-        transform: translate(-105%, 0%);
+        transform: translate(-85%, 0%);
       }
 
       // Popup on the RIGHT side, pointing up
       &--right-top {
         right: 0%;
         top: 0%;
-        transform: translate(105%, 0%);
+        transform: translate(85%, 0%);
       }
 
       // Popup on the RIGHT side, pointing down
       &--right-bottom {
         right: 0%;
         bottom: 0%;
-        transform: translate(105%, 0%);
+        transform: translate(85%, 0%);
       }
 
-      .popup-close {        
+      .popup-close {
         @include mq() {
           position: absolute;
           top: EM(10);
@@ -103,7 +103,7 @@
           &::before {
             content: "";
             width: EM(16);
-            height: .8px;
+            height: 0.8px;
             background-color: #fff;
           }
         }
@@ -187,6 +187,11 @@
         width: EM(260);
         height: EM(260);
         padding: EM(8);
+
+        @include mq(1440) {
+          width: EM(220);
+          height: EM(220);
+        }
 
         @include mq() {
           width: EM(100);

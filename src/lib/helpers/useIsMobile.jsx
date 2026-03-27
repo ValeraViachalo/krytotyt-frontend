@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Switch to pixel-based breakpoint detection
-const useIsMobile = (breakpoint = 766) => {
+const useIsMobile = (breakpoint = 1024) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {

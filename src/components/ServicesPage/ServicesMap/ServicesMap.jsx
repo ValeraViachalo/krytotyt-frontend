@@ -335,30 +335,68 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
     const catBaseX = cat.position.x + worldOffset.x;
     const catBaseY = cat.position.y + worldOffset.y;
 
-    /* Check all 9 neighbouring tile copies (3×3 around current)
-       to find which copy of this category is nearest to screen centre */
-    let bestDist = Infinity;
-    let bestX = catBaseX;
-    let bestY = catBaseY;
+    /* Copies repeat every baseTileW / baseTileH (= cloneW / cloneH).
+       Compute which copy index puts the category closest to screen centre,
+       no matter how far the user has scrolled. */
+    const periodX = baseTileW;
+    const periodY = baseTileH;
 
-    for (let ox = -1; ox <= 1; ox++) {
-      for (let oy = -1; oy <= 1; oy++) {
-        const tileX = catBaseX + ox * (tileSize.w / 2);
-        const tileY = catBaseY + oy * (tileSize.h / 2);
-        const screenX = tileX + s.current.x;
-        const screenY = tileY + s.current.y;
-        const dist = (screenX - cx) ** 2 + (screenY - cy) ** 2;
-        if (dist < bestDist) {
-          bestDist = dist;
-          bestX = tileX;
-          bestY = tileY;
-        }
-      }
-    }
+    const mx = Math.round((cx - s.current.x - catBaseX) / periodX);
+    const my = Math.round((cy - s.current.y - catBaseY) / periodY);
+
+    const bestX = catBaseX + mx * periodX;
+    const bestY = catBaseY + my * periodY;
 
     s.target.x = -bestX + cx;
     s.target.y = -bestY + cy;
-  }, [activeFilter, activeCategory, categories, worldOffset, tileSize]);
+  }, [activeFilter, activeCategory, categories, worldOffset, baseTileW, baseTileH]);
+
+  /* ── Hover category dimming (event delegation) ────────────── */
+  useEffect(() => {
+    const ctr = containerRef.current;
+    if (!ctr) return;
+
+    let hoveredCat = null;
+
+    const updateHoverClasses = (cat) => {
+      if (cat) {
+        ctr.setAttribute("data-hover-cat", "");
+        itemWrapsRef.current.forEach((el, i) => {
+          if (!el) return;
+          el.classList.toggle(
+            "is-hover-active",
+            gridItems[i]?.catSlug === cat,
+          );
+        });
+      } else {
+        ctr.removeAttribute("data-hover-cat");
+        itemWrapsRef.current.forEach((el) => {
+          if (el) el.classList.remove("is-hover-active");
+        });
+      }
+    };
+
+    const onMouseOver = (e) => {
+      const wrap = e.target.closest(".services-map__item-wrap");
+      const cat = wrap?.dataset?.cat || null;
+      if (cat === hoveredCat) return;
+      hoveredCat = cat;
+      updateHoverClasses(cat);
+    };
+
+    const onMouseLeave = () => {
+      hoveredCat = null;
+      updateHoverClasses(null);
+    };
+
+    ctr.addEventListener("mouseover", onMouseOver);
+    ctr.addEventListener("mouseleave", onMouseLeave);
+
+    return () => {
+      ctr.removeEventListener("mouseover", onMouseOver);
+      ctr.removeEventListener("mouseleave", onMouseLeave);
+    };
+  }, [gridItems]);
 
   /* ── Click handler (event delegation) ──────────────────────── */
   const handleClick = useCallback(
@@ -367,10 +405,10 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
       const wrap = e.target.closest(".services-map__item-wrap");
       if (!wrap) return;
       const slug = wrap.dataset.cat;
-      if (!slug) return;
-      onFilterChange(activeCategory === slug ? "all" : slug);
+      if (!slug || slug === activeCategoryRef.current) return;
+      onFilterChange(slug);
     },
-    [activeCategory, onFilterChange],
+    [onFilterChange],
   );
 
   /* ── Render ────────────────────────────────────────────────── */

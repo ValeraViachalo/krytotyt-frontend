@@ -15,7 +15,7 @@ export default function CaseHero({ data }) {
             className="case-hero__button case-hero__button--next"
           >
             <Image
-              src="/assets/icon/arrow-bg.svg"
+              src="/assets/icon/arrow-pixeled.svg"
               alt="Next case"
               width={96}
               height={96}
@@ -30,7 +30,7 @@ export default function CaseHero({ data }) {
             className="case-hero__button case-hero__button--prev"
           >
             <Image
-              src="/assets/icon/arrow-bg.svg"
+              src="/assets/icon/arrow-pixeled.svg"
               alt="Previous case"
               width={96}
               height={96}

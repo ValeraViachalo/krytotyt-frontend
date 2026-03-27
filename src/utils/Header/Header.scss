@@ -75,6 +75,9 @@
         height: EM(50);
         filter: invert(1);
         transition: filter 0.3s ease;
+        @include mq(1200) {
+          height: EM(34);
+        }
 
         @include mq() {
           height: EM(17);
@@ -125,7 +128,7 @@
       width: EM(27);
       position: relative;
 
-      @include mq($mobile, "min") {
+      @include mq($tablet, "min") {
         display: none;
       }
 
@@ -431,6 +434,9 @@
   }
 
   .menu {
+    width: 100%;
+    max-width: EM(400);
+    margin: 0 auto;
     .top {
       display: flex;
       align-items: center;

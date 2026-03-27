@@ -59,15 +59,15 @@
     &-buttons {
       position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      left: EM(70);
+      right: EM(70);
+      transform: translateY(-50%);
 
       display: flex;
       justify-content: space-between;
 
-      width: EM(1500);
 
-       @include mq() {
+      @include mq() {
         display: none;
       }
     }

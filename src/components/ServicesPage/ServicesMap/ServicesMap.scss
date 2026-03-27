@@ -7,6 +7,7 @@
   user-select: none;
   touch-action: none;
   cursor: grab;
+  transition: scale 0.5s ease;
 
   &.is-dragging {
     cursor: grabbing;
@@ -26,13 +27,13 @@
   &.is-ready &__item-wrap {
     opacity: 1;
     transform: translateY(0);
-    
+
     font-size: EM(20);
 
     @include mq {
       font-size: EM(15);
     }
-    
+
     &:nth-of-type(2n) {
       font-size: EM(16);
       opacity: 0.3;
@@ -50,7 +51,9 @@
     align-items: center;
     gap: 0.8em;
     white-space: nowrap;
-    transition: opacity 0.3s ease-out;
+    transition:
+      opacity 0.3s ease-out,
+      transform 0.3s ease-out;
 
     &::before {
       content: "";
@@ -106,19 +109,23 @@
   //     font-size: EM(24);
   //   }
   // }
-
 }
 
 /* ── Filter dimming ────────────────────────────────────────── */
 .services-map[data-filter]
   .services-map__item-wrap:not(.is-active)
   .services-map__item {
-  opacity: 0.15;
+  opacity: 0.3;
 }
 
-/* ── Hover dimming (pure CSS, no JS re-renders) ────────────── */
-// .services-map:not(.is-dragging):has(.services-map__item-wrap:hover)
-//   .services-map__item-wrap:not(:hover)
-//   .services-map__item {
-//   opacity: 0.15;
-// }
+/* ── Hover category dimming ─────────────────────────────────── */
+.services-map[data-hover-cat]:not(.is-dragging)
+  .services-map__item-wrap:not(.is-hover-active)
+  .services-map__item {
+  opacity: 0.3;
+}
+
+/* ── Active filter zoom ────────────────────────────────────── */
+.services-map[data-filter] {
+  // scale: 1.2;
+}

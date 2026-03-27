@@ -4,8 +4,33 @@
   --size-container-ideal: 1728; /* screen-size in design - no px */
   --size-container-min: 992px;
   --size-container-max: 1920px;
-  --size-container: clamp(var(--size-container-min), 100vw, var(--size-container-max));
-  --size-font: calc(var(--size-container) / (var(--size-container-ideal) / var(--size-unit)));
+  --size-container: clamp(
+    var(--size-container-min),
+    100vw,
+    var(--size-container-max)
+  );
+  --size-font: calc(
+    var(--size-container) / (var(--size-container-ideal) / var(--size-unit))
+  );
+  // --size-font: 16px;
+}
+
+@media screen and (max-width: 1440px) {
+  :root {
+    --size-unit: 16; /* body font-size in design - no px */
+    --size-container-ideal: 1440; /* screen-size in design - no px */
+    --size-container-min: 992px;
+    --size-container-max: 1440px;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  :root {
+    --size-unit: 16; /* body font-size in design - no px */
+    --size-container-ideal: 1200; /* screen-size in design - no px */
+    --size-container-min: 992px;
+    --size-container-max: 1440px;
+  }
 }
 
 /* Tablet */

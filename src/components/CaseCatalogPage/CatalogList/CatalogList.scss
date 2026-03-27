@@ -26,6 +26,7 @@
 
     .catalog-item {
       width: EM(137);
+      height: min-content;
 
       opacity: 1;
       transition: opacity 0.5s ease;
@@ -93,12 +94,23 @@
           height: auto;
           object-fit: cover;
 
-          transition: transform 0.7s $ease-out-expo;
+          filter: blur(EM(5));
+          transition:
+            filter 0.6s ease,
+            transform 0.7s $ease-out-expo;
+
+          &.is-loaded {
+            filter: blur(0);
+          }
 
           @include mq() {
             width: auto;
             height: 100%;
-            transition: none !important;
+            transition: opacity 0.6s ease !important;
+
+            &.is-loaded {
+              opacity: 1;
+            }
           }
         }
       }
@@ -183,6 +195,34 @@
 
         &--active {
           background-color: $c-black;
+        }
+
+        &--reset {
+          padding: EM(12);
+          pointer-events: none;
+          background-color: #31313126;
+          transition: background-color 0.3s ease;
+
+          &-active {
+            pointer-events: auto;
+            background-color: $g-70;
+
+            .filter-button__icon {
+              path {
+                fill: $c-white;
+              }
+            }
+          }
+        }
+
+        &__icon {
+          width: EM(26);
+          height: EM(26);
+
+          path {
+            fill: $g-40;
+            transition: fill 0.3s ease;
+          }
         }
       }
     }
