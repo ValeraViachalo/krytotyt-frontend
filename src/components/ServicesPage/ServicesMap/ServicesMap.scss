@@ -26,6 +26,21 @@
   &.is-ready &__item-wrap {
     opacity: 1;
     transform: translateY(0);
+    
+    font-size: EM(20);
+
+    @include mq {
+      font-size: EM(15);
+    }
+    
+    &:nth-of-type(2n) {
+      font-size: EM(16);
+      opacity: 0.3;
+
+      @include mq {
+        font-size: EM(12);
+      }
+    }
   }
 
   /* ── Service item ────────────────────────────────────────── */
@@ -33,9 +48,8 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: EM(4);
+    gap: 0.8em;
     white-space: nowrap;
-    padding: EM(8);
     transition: opacity 0.3s ease-out;
 
     &::before {
@@ -47,63 +61,64 @@
       background: url("/assets/logo-small.svg") no-repeat center center;
       background-size: contain;
     }
-  }
 
-  &__item-label {
-    color: $c-white;
-    letter-spacing: 0.05em;
-  }
-
-  /* ── Size variants ───────────────────────────────────────── */
-  &__item--sm {
-    &::before {
-      width: EM(16);
-      height: EM(14);
-    }
-    .services-map__item-label {
-      font-size: EM(16);
+    &-label {
+      color: $c-white;
     }
   }
 
-  &__item--md {
-    &::before {
-      width: EM(20);
-      height: EM(17);
-    }
-    .services-map__item-label {
-      font-size: EM(18);
-    }
-  }
+  // &__item--sm {
+  //   &::before {
+  //     width: EM(16);
+  //     height: EM(14);
+  //   }
+  //   .services-map__item-label {
+  //     font-size: EM(16);
+  //   }
+  // }
 
-  &__item--lg {
-    &::before {
-      width: EM(24);
-      height: EM(20);
-    }
-    .services-map__item-label {
-      font-size: EM(20);
-    }
-  }
+  // &__item--md {
+  //   &::before {
+  //     width: EM(20);
+  //     height: EM(17);
+  //   }
+  //   .services-map__item-label {
+  //     font-size: EM(18);
+  //   }
+  // }
 
-  &__item--xl {
-    &::before {
-      width: EM(32);
-      height: EM(27);
-    }
-    .services-map__item-label {
-      font-size: EM(24);
-    }
-  }
+  // &__item--lg {
+  //   &::before {
+  //     width: EM(24);
+  //     height: EM(20);
+  //   }
+  //   .services-map__item-label {
+  //     font-size: EM(20);
+  //   }
+  // }
+
+  // &__item--xl {
+  //   &::before {
+  //     width: EM(32);
+  //     height: EM(27);
+  //   }
+  //   .services-map__item-label {
+  //     font-size: EM(24);
+  //   }
+  // }
+
 }
 
 /* ── Filter dimming ────────────────────────────────────────── */
-.services-map[data-filter] .services-map__item-wrap:not(.is-active) .services-map__item {
+.services-map[data-filter]
+  .services-map__item-wrap:not(.is-active)
+  .services-map__item {
   opacity: 0.15;
 }
 
 /* ── Hover dimming (pure CSS, no JS re-renders) ────────────── */
-.services-map:not(.is-dragging):has(.services-map__item-wrap:hover)
-  .services-map__item-wrap:not(:hover)
-  .services-map__item {
-  opacity: 0.15;
-}
+// .services-map:not(.is-dragging):has(.services-map__item-wrap:hover)
+//   .services-map__item-wrap:not(:hover)
+//   .services-map__item {
+//   opacity: 0.15;
+// }
