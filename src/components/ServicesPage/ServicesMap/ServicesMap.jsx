@@ -117,6 +117,7 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
   const winRef = useRef({ w: 0, h: 0 });
   const itemDataRef = useRef([]);
+  const scaleRef = useRef({ current: 0.8, target: 0.8 });
   const onFilterChangeRef = useRef(onFilterChange);
   onFilterChangeRef.current = onFilterChange;
 
@@ -263,11 +264,13 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
         const posX = item.baseX + s.current.x + d.extraX + px;
         const posY = item.baseY + s.current.y + d.extraY + py;
 
-        /* Wrap when item goes off-screen */
-        if (dirX === "right" && posX > win.w) d.extraX -= ts.w;
-        if (dirX === "left" && posX + d.w < 0) d.extraX += ts.w;
-        if (dirY === "down" && posY > win.h) d.extraY -= ts.h;
-        if (dirY === "up" && posY + d.h < 0) d.extraY += ts.h;
+        /* Wrap when item goes beyond 120% of screen */
+        const marginX = win.w * 0.2;
+        const marginY = win.h * 0.2;
+        if (dirX === "right" && posX > win.w + marginX) d.extraX -= ts.w;
+        if (dirX === "left" && posX + d.w < -marginX) d.extraX += ts.w;
+        if (dirY === "down" && posY > win.h + marginY) d.extraY -= ts.h;
+        if (dirY === "up" && posY + d.h < -marginY) d.extraY += ts.h;
 
         const fx = item.baseX + s.current.x + d.extraX + px;
         const fy = item.baseY + s.current.y + d.extraY + py;
@@ -277,6 +280,13 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
       s.last.x = s.current.x;
       s.last.y = s.current.y;
+
+      /* Smooth scale animation — same easing as scroll */
+      const sc = scaleRef.current;
+      sc.current += (sc.target - sc.current) * s.ease;
+      if (containerRef.current) {
+        containerRef.current.style.transform = `scale(${sc.current})`;
+      }
 
       /* After first frame, reveal items */
       if (firstFrame) {
@@ -300,8 +310,10 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
     if (activeCategory) {
       ctr.setAttribute("data-filter", activeCategory);
+      scaleRef.current.target = 1.2;
     } else {
       ctr.removeAttribute("data-filter");
+      scaleRef.current.target = 0.8;
     }
 
     itemWrapsRef.current.forEach((el, i) => {
@@ -413,25 +425,27 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
   /* ── Render ────────────────────────────────────────────────── */
   return (
-    <div className="services-map" ref={containerRef} onClick={handleClick}>
-      {gridItems.map((item, i) => (
-        <div
-          key={item.key}
-          ref={(el) => (itemWrapsRef.current[i] = el)}
-          className="services-map__item-wrap"
-          data-cat={item.catSlug}
-        >
+    <div className="services-map-wrapper">
+      <div className="services-map" ref={containerRef} onClick={handleClick}>
+        {gridItems.map((item, i) => (
           <div
-            ref={(el) => (itemInnersRef.current[i] = el)}
-            className={clsx(
-              "services-map__item",
-              `services-map__item--${item.size}`,
-            )}
+            key={item.key}
+            ref={(el) => (itemWrapsRef.current[i] = el)}
+            className="services-map__item-wrap"
+            data-cat={item.catSlug}
           >
-            <span className="services-map__item-label">{item.title}</span>
+            <div
+              ref={(el) => (itemInnersRef.current[i] = el)}
+              className={clsx(
+                "services-map__item",
+                `services-map__item--${item.size}`,
+              )}
+            >
+              <span className="services-map__item-label">{item.title}</span>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

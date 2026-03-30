@@ -1,11 +1,9 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useCallback } from "react";
 
 import "./CatalogList.scss";
 import Link from "next/link";
 import clsx from "clsx";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 import Image from "next/image";
 
 const preparedResetButtonText = {
@@ -18,67 +16,83 @@ const preparedResetButtonText = {
 export default function CatalogList({ data }) {
   const [activeFilter, setActiveFilter] = useState("all");
   const [activeCase, setActiveCase] = useState(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const sectionRef = useRef(null);
 
   const resetButtonText = preparedResetButtonText.ua;
 
-  const handleFilterChange = (filter) => {
-    setActiveFilter(filter);
-    setActiveCase(null);
-  };
+  const handleFilterChange = useCallback(
+    (filter) => {
+      if (filter === activeFilter) return;
+      setIsAnimating(true);
+      setActiveCase(null);
 
-  const matchesFilter = (item) => {
-    if (!item) return false;
-    if (activeFilter === "all") return true;
+      setTimeout(() => {
+        setActiveFilter(filter);
+        setIsAnimating(false);
 
-    // try multiple possible shapes for project type on item
-    if (item.projectType && item.projectType.slug) {
-      return item.projectType.slug === activeFilter;
-    }
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    },
+    [activeFilter],
+  );
 
-    if (typeof item.projectType === "string") {
-      return item.projectType === activeFilter;
-    }
+  const matchesFilter = useCallback(
+    (item) => {
+      if (!item) return false;
+      if (activeFilter === "all") return true;
 
-    if (Array.isArray(item.projectTypes)) {
-      // array of objects or array of slugs
-      return item.projectTypes.some((pt) =>
-        pt?.slug ? pt.slug === activeFilter : pt === activeFilter,
-      );
-    }
+      if (item.projectType && item.projectType.slug) {
+        return item.projectType.slug === activeFilter;
+      }
 
-    // fallback: check top-level slug field
-    if (item.slug) return item.slug === activeFilter;
+      if (typeof item.projectType === "string") {
+        return item.projectType === activeFilter;
+      }
 
-    return false;
-  };
+      if (Array.isArray(item.projectTypes)) {
+        return item.projectTypes.some((pt) =>
+          pt?.slug ? pt.slug === activeFilter : pt === activeFilter,
+        );
+      }
 
-  const filteredList = useMemo(() => {
-    return (data?.list || []).filter((item) => matchesFilter(item));
-  }, [data?.list, activeFilter]);
+      if (item.slug) return item.slug === activeFilter;
+
+      return false;
+    },
+    [activeFilter],
+  );
+
+  const allItems = data?.list || [];
 
   return (
-    <section className="catalog-list container">
-      <div className="catalog-list-content">
-        {filteredList &&
-          filteredList.map((item, index) => (
-            <CatalogItem
-              key={item._id ?? item.slug ?? index}
-              item={item}
-              activeCase={activeCase}
-              setActiveCase={setActiveCase}
-              index={index}
-            />
-          ))}
+    <section className="catalog-list container" ref={sectionRef}>
+      <div
+        className={clsx("catalog-list-content", {
+          "catalog-list-content--animating": isAnimating,
+        })}
+      >
+        {allItems.map((item, index) => (
+          <CatalogItem
+            key={item._id ?? item.slug ?? index}
+            item={item}
+            activeCase={activeCase}
+            setActiveCase={setActiveCase}
+            index={index}
+            hidden={!matchesFilter(item)}
+          />
+        ))}
 
         <div
           className={clsx("catalog-list-hovered", {
             "catalog-list-hovered--active": activeCase !== null,
           })}
         >
-          {filteredList.map((item, index) => (
+          {allItems.map((item, index) => (
             <span
               className={clsx("catalog-list-hovered__name", {
-                "catalog-list-hovered__name--active": activeCase === index,
+                "catalog-list-hovered__name--active":
+                  activeCase === index && matchesFilter(item),
               })}
               key={item._id ?? item.slug ?? index}
             >
@@ -140,7 +154,7 @@ const FilterButton = ({ filter, isActiveFilter, handleFilterChange }) => {
   );
 };
 
-const CatalogItem = ({ item, activeCase, setActiveCase, index }) => {
+const CatalogItem = ({ item, activeCase, setActiveCase, index, hidden }) => {
   const handleMouseEnter = () => {
     setActiveCase(index);
   };
@@ -155,6 +169,7 @@ const CatalogItem = ({ item, activeCase, setActiveCase, index }) => {
       className={clsx("catalog-item", {
         "catalog-item--not-active": activeCase !== null && activeCase !== index,
         "catalog-item--active": activeCase === index,
+        "catalog-item--hidden": hidden,
       })}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

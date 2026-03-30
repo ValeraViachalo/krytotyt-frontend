@@ -4,6 +4,7 @@ import "./CaseHero.scss";
 import BlockContent from "@/utils/BlockContent/BlockContent";
 import Link from "next/link";
 import Image from "next/image";
+import arrowPixeled from "../../../../public/assets/icon/arrow-pixeled.svg";
 
 export default function CaseHero({ data }) {
   return (
@@ -15,7 +16,7 @@ export default function CaseHero({ data }) {
             className="case-hero__button case-hero__button--next"
           >
             <Image
-              src="/assets/icon/arrow-pixeled.svg"
+              src={arrowPixeled}
               alt="Next case"
               width={96}
               height={96}
@@ -30,7 +31,7 @@ export default function CaseHero({ data }) {
             className="case-hero__button case-hero__button--prev"
           >
             <Image
-              src="/assets/icon/arrow-pixeled.svg"
+              src={arrowPixeled}
               alt="Previous case"
               width={96}
               height={96}
