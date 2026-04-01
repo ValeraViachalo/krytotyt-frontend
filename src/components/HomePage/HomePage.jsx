@@ -13,7 +13,6 @@ export default function HomePage({ data }) {
   ));
 
   console.log(projects);
-  
 
   return (
     <main className="home">
