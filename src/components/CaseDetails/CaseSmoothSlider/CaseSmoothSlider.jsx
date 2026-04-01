@@ -132,7 +132,7 @@ export default function CaseSmoothSlider({ data }) {
   return (
     <div className={`case-slider${allLoaded ? ' is-loaded' : ''}`}>
       <div className="smooth-slider" ref={(node) => { ref(node); containerRef.current = node; }}>
-        {data.map((slide, i) => (
+        {[...data, ...data, ...data].map((slide, i) => (
           <div key={i} className="smooth-slider__slide"
             ref={(el) => (slideRefs.current[i] = el)}
             onClick={() => slider.goToIndex(i)}

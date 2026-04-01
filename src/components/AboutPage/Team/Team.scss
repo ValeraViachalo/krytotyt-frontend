@@ -184,8 +184,8 @@
     // ── Compact layout: ≤6 members, bigger items in 3-column rows ──
     &--compact {
       .team-member {
-        width: EM(260);
-        height: EM(260);
+        width: EM(233);
+        height: EM(233);
         padding: EM(8);
 
         @include mq(1440) {

@@ -70,19 +70,6 @@ export default function SoundcloudPlayer() {
           </div>
         </div>
 
-        <button
-          className="player__next"
-          onClick={next}
-          disabled={!isPlayerReady}
-          title="Next track"
-          aria-label="Next track"
-        >
-          <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" width="12" height="12">
-            <path d="M2 2L8 6L2 10V2Z" fill="white" />
-            <path d="M10 2V10" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </button>
-
         <a
           href={playlistMeta?.permalink_url ?? URL_PLAYLIST}
           target="_blank"

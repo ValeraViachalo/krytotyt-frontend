@@ -1,8 +1,5 @@
 import localFont from "next/font/local";
 import "@/styles/reset.scss";
-import { ScrollProvider } from "@/lib/providers/ScrollProvider/ScrollProvider";
-import Header from "@/utils/Header/Header";
-import Footer from "@/utils/Footer/Footer";
 import { defaultMetadata } from "@/lib/helpers/defaultMetadata";
 import { AudioProvider } from "@/utils/AudioContext";
 

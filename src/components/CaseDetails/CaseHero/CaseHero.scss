@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: center;
 
-    height: clamp(EM(800), 100svh, EM(1000));
+    height: clamp(EM(850), 100svh, EM(1000));
 
     position: relative;
 
@@ -52,6 +52,14 @@
             width: EM(26);
             height: EM(23);
           }
+        }
+      }
+
+      .bottom {
+        max-height: EM(470);
+
+        @include mq() {
+          max-height: none;
         }
       }
     }
