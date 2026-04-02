@@ -1,0 +1,42 @@
+.not-found-page {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-height: EM(400);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: EM(72);
+
+  @include mq() {
+    gap: EM(36);
+    min-height: auto;
+  }
+
+  &__image {
+    width: EM(567);
+    height: EM(190);
+
+    @include mq() {
+      width: EM(320);
+      height: EM(108);
+    }
+  }
+
+  .not-found-page__link {
+    background-color: $c-green-100;
+    color: $c-black;
+    backdrop-filter: none;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      opacity 0.3s ease;
+
+    @include hover {
+      background-color: $c-green-80;
+    }
+  }
+}

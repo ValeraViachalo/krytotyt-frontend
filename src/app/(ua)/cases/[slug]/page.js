@@ -1,6 +1,7 @@
 import CaseDetails from '@/components/CaseDetails/CaseDetails'
 import { client } from '@/lib/sanity/client';
 import { QUERY_CASES_DETAILS } from '@/lib/sanity/query';
+import { notFound } from 'next/navigation';
 
 export const revalidate = 60;
 
@@ -15,7 +16,7 @@ export default async function page({ params }) {
   const data = await fetchCaseData({ slug: params.slug });
 
   if (!data) {
-    return <div>No data found</div>;
+    return notFound();
   }
 
   return <CaseDetails data={data} />
