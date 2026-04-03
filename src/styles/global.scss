@@ -16,6 +16,8 @@
   min-height: 100vh;
   max-width: 100vw;
 
+  touch-action: auto !important;
+
   ::selection {
     color: $g-70;
     background: $c-white;

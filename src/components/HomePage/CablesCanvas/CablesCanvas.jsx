@@ -80,15 +80,28 @@ export default function CablesCanvas({
     scriptRef.current = script;
 
     return () => {
-      // Destroy patch on unmount to free WebGL context
-      patchRef.current?.pause?.();
-      patchRef.current = null;
+      // Fully destroy patch on unmount to free WebGL context
+      if (patchRef.current) {
+        patchRef.current.pause?.();
+        patchRef.current.close?.();
+        patchRef.current = null;
+      }
       initializedRef.current = false;
+
+      // Clean up global references
+      if (window.projectClickedSlug) {
+        delete window.projectClickedSlug;
+      }
 
       // Clean up injected script
       if (scriptRef.current && scriptRef.current.parentNode) {
         scriptRef.current.parentNode.removeChild(scriptRef.current);
         scriptRef.current = null;
+      }
+
+      // Remove CABLES exported patch so it re-initializes on next mount
+      if (window.CABLES?.exportedPatch) {
+        delete window.CABLES.exportedPatch;
       }
     };
   }, [patchDir, initPatch]);
