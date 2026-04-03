@@ -16,7 +16,6 @@ export default function CablesCanvas({
   const router = useRouter();
   const patchRef = useRef(null);
   const initializedRef = useRef(false);
-  const scriptRef = useRef(null);
 
   const initPatch = useCallback(() => {
     if (initializedRef.current) return;
@@ -65,45 +64,20 @@ export default function CablesCanvas({
   }, [router, patchDir, canvasId, projectsData, patchOptionsProp]);
 
   useEffect(() => {
-    // If script was already loaded (e.g. hot-reload / back-navigation)
+    // If CABLES is already available, just init
     if (window.CABLES?.exportedPatch && !initializedRef.current) {
       initPatch();
       return;
     }
 
-    // Dynamically inject the patch script (like the reference CablesPatch)
+    // Dynamically inject the patch script
     const script = document.createElement("script");
     script.src = patchDir + "patch.js";
     script.async = true;
     script.onload = () => initPatch();
     document.body.appendChild(script);
-    scriptRef.current = script;
 
-    return () => {
-      // Fully destroy patch on unmount to free WebGL context
-      if (patchRef.current) {
-        patchRef.current.pause?.();
-        patchRef.current.close?.();
-        patchRef.current = null;
-      }
-      initializedRef.current = false;
-
-      // Clean up global references
-      if (window.projectClickedSlug) {
-        delete window.projectClickedSlug;
-      }
-
-      // Clean up injected script
-      if (scriptRef.current && scriptRef.current.parentNode) {
-        scriptRef.current.parentNode.removeChild(scriptRef.current);
-        scriptRef.current = null;
-      }
-
-      // Remove CABLES exported patch so it re-initializes on next mount
-      if (window.CABLES?.exportedPatch) {
-        delete window.CABLES.exportedPatch;
-      }
-    };
+    // No cleanup — this component lives permanently in the layout
   }, [patchDir, initPatch]);
 
   return (
