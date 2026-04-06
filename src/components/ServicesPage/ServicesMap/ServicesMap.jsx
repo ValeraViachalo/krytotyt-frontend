@@ -144,8 +144,8 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
     /* Center the base tile in the viewport */
     const s = scrollRef.current;
-    const ix = -(baseTileW / 2) + winRef.current.w / 2;
-    const iy = -(baseTileH / 2) + winRef.current.h / 2;
+    const ix = -(baseTileW / 2) + winRef.current.w / 2 - 500;
+    const iy = -(baseTileH / 2) + winRef.current.h / 2 - 500;
     s.current.x = s.target.x = s.last.x = ix;
     s.current.y = s.target.y = s.last.y = iy;
   }, [gridItems, baseTileW, baseTileH]);

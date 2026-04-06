@@ -1,0 +1,124 @@
+.about-popup {
+  width: EM(284);
+  padding: EM(17) 0 EM(17) 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  isolation: isolate;
+
+  position: fixed;
+  right: EM(85);
+  bottom: EM(85);
+  z-index: 100;
+
+  background: rgba(85, 85, 85, 0.5);
+  backdrop-filter: blur(27px);
+  /* Note: backdrop-filter has minimal browser support */
+  border-radius: EM(16);
+
+  transition: background-color 0.3s ease;
+
+  @include hover {
+    background: #68686880;
+  }
+
+  @include mq() {
+    right: EM(24);
+    bottom: EM(10);
+
+    width: EM(234);
+    padding: EM(10) 0;
+    border-radius: EM(24);
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - EM(40));
+    padding: 0 EM(20);
+
+    &-toggle {
+      padding: EM(6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      // transform: translate(EM(6), EM(-6));
+
+      .toggle-icon {
+        width: EM(16);
+        height: EM(16);
+        cursor: pointer;
+
+        path {
+          transition: transform 0.3s ease;
+          transform-origin: center;
+        }
+
+        &--active {
+          path:nth-of-type(2) {
+            transform: scaleY(0);
+          }
+        }
+      }
+    }
+
+    .top-title {
+      transition: opacity 0.3s ease;
+    }
+
+    &--hidden {
+      .top-title {
+        opacity: 0;
+      }
+    }
+  }
+
+  &-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: EM(10);
+
+    @include mq() {
+      margin-top: 0;
+    }
+
+    &__row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__member {
+      width: EM(40);
+      height: EM(40);
+      padding: EM(2);
+
+      @include mq() {
+        padding: 0 EM(2);
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: EM(12);
+    margin: EM(36) 0 EM(20);
+
+    @include mq() {
+      margin: EM(24) 0 EM(18);
+    }
+  }
+}

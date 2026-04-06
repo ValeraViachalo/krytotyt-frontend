@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from "react";
 import { useRouter } from "next/navigation";
 import "./CablesCanvas.scss";
 
 const PATCH_DIR = "/cables/";
 const CANVAS_ID = "cables-canvas";
 
-export default function CablesCanvas({
+function CablesCanvas({
   projectsData,
   patchDir = PATCH_DIR,
   canvasId = CANVAS_ID,
   patchOptions: patchOptionsProp = {},
-}) {
+}, ref) {
   const router = useRouter();
   const patchRef = useRef(null);
   const initializedRef = useRef(false);
@@ -63,6 +63,22 @@ export default function CablesCanvas({
     patchRef.current = new CABLES.Patch(options);
   }, [router, patchDir, canvasId, projectsData, patchOptionsProp]);
 
+  useImperativeHandle(ref, () => ({
+    pause: () => {
+      const p = patchRef.current;
+      if (!p) return;
+      p.config.doRequestAnimation = false;
+      p.pause();
+    },
+    resume: () => {
+      const p = patchRef.current;
+      if (!p) return;
+      p.config.doRequestAnimation = true;
+      p.resume();
+      p.renderloop?.resume();
+    },
+  }), []);
+
   useEffect(() => {
     // If CABLES is already available, just init
     if (window.CABLES?.exportedPatch && !initializedRef.current) {
@@ -90,3 +106,5 @@ export default function CablesCanvas({
     </div>
   );
 }
+
+export default forwardRef(CablesCanvas);
