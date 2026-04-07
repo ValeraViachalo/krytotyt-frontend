@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { anim, logoAnim, MenuAnim } from "@/lib/helpers/anim";
 import { usePathname } from "next/navigation";
 import SoundcloudPlayer from "../SoundcloudPlayer/SoundcloudPlayer";
-import { useAudio } from "@/utils/AudioContext";
+import { useAudio } from "@/lib/providers/AudioContext/AudioContext";
 
 const staticData = {
   nav: [

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef } from "react";
-import { useAudio } from "@/utils/AudioContext";
+import { useAudio } from "@/lib/providers/AudioContext/AudioContext";
 import "./SoundcloudPlayer.scss";
 
 const URL_PLAYLIST = "https://soundcloud.com/krytotytmusic";
