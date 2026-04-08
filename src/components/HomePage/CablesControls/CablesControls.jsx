@@ -1,11 +1,33 @@
-import React from "react";
+"use client";
 
+import { useState, useCallback } from "react";
 import "./CablesControls.scss";
 
+const INITIAL_ZOOM = 1;
+const MIN_ZOOM = 0.6;
+const MAX_ZOOM = 2.2;
+const ZOOM_STEP = 0.4;
+
 export default function CablesControls() {
+  const [zoom, setZoom] = useState(INITIAL_ZOOM);
+
+  const applyZoom = useCallback((value) => {
+    const clamped = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, value));
+    setZoom(clamped);
+    window.CABLES?.patch?.setVariable("ZoomLevelInput", clamped);
+  }, []);
+
+  const isAtMax = zoom >= MAX_ZOOM;
+  const isAtMin = zoom <= MIN_ZOOM;
+  const isAtDefault = zoom === INITIAL_ZOOM;
+
   return (
     <div className="cables-controls">
-      <button className="cables-controls__button">
+      <button
+        className={`cables-controls__button${isAtMax ? " cables-controls__button--inactive" : ""}`}
+        onClick={() => applyZoom(zoom + ZOOM_STEP)}
+        disabled={isAtMax}
+      >
         <svg
           width="13"
           height="13"
@@ -28,7 +50,11 @@ export default function CablesControls() {
           />
         </svg>
       </button>
-      <button className="cables-controls__button">
+      <button
+        className={`cables-controls__button${isAtMin ? " cables-controls__button--inactive" : ""}`}
+        onClick={() => applyZoom(zoom - ZOOM_STEP)}
+        disabled={isAtMin}
+      >
         <svg
           width="13"
           height="2"
@@ -45,7 +71,10 @@ export default function CablesControls() {
           />
         </svg>
       </button>
-      <button className="cables-controls__button cables-controls__button-reset cables-controls__button-reset--inactive">
+      <button
+        className={`cables-controls__button cables-controls__button-reset${isAtDefault ? " cables-controls__button-reset--inactive" : ""}`}
+        onClick={() => applyZoom(INITIAL_ZOOM)}
+      >
         <svg
           width="20"
           height="20"

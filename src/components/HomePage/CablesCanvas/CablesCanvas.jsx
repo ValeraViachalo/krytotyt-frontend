@@ -49,18 +49,19 @@ function CablesCanvas({
       },
       onFinishedLoading: () => {
         console.log("[CABLES] Finished loading");
-        patchRef.current?.setVariable("zoomState", 1);
+        patchRef.current?.setVariable("ZoomLevelInput", 1);
         patchRef.current?.setVariable("projectsData", projectsData);
       },
       projectClickedSlug,
       variables: {
-        zoomState: 0,
+        ZoomLevelInput: 1,
         projectsData,
       },
       ...patchOptionsProp,
     };
 
     patchRef.current = new CABLES.Patch(options);
+    CABLES.patch = patchRef.current;
   }, [router, patchDir, canvasId, projectsData, patchOptionsProp]);
 
   useImperativeHandle(ref, () => ({
