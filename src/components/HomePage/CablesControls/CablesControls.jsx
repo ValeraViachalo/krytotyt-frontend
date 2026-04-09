@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import "./CablesControls.scss";
 
 // Source of truth: allowed zoom states (can be floats too).
-const ZOOM_STATES = [0.6, 1, 1.8];
+const ZOOM_STATES = [0.6, 1.2, 1.8];
 const DEFAULT_ZOOM = 1.2;
 
 function clampToZoomStates(value) {
