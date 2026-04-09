@@ -1,31 +1,72 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import "./CablesControls.scss";
 
-const INITIAL_ZOOM = 1;
-const MIN_ZOOM = 0.6;
-const MAX_ZOOM = 2.2;
-const ZOOM_STEP = 0.4;
+// Source of truth: allowed zoom states (can be floats too).
+const ZOOM_STATES = [0.6, 1, 1.8];
+const DEFAULT_ZOOM = 1.2;
+
+function clampToZoomStates(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return DEFAULT_ZOOM;
+  if (ZOOM_STATES.includes(num)) return num;
+
+  // Pick the nearest allowed state.
+  let nearest = ZOOM_STATES[0];
+  let bestDist = Math.abs(num - nearest);
+  for (const z of ZOOM_STATES) {
+    const d = Math.abs(num - z);
+    if (d < bestDist) {
+      bestDist = d;
+      nearest = z;
+    }
+  }
+  return nearest;
+}
 
 export default function CablesControls() {
-  const [zoom, setZoom] = useState(INITIAL_ZOOM);
+  const [zoom, setZoom] = useState(() => clampToZoomStates(DEFAULT_ZOOM));
+  const zoomRef = useRef(zoom);
 
   const applyZoom = useCallback((value) => {
-    const clamped = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, value));
-    setZoom(clamped);
-    window.CABLES?.patch?.setVariable("ZoomLevelInput", clamped);
+    const next = clampToZoomStates(value);
+    setZoom(next);
+    window.CABLES?.patch?.setVariable("ZoomLevelInput", next);
   }, []);
 
-  const isAtMax = zoom >= MAX_ZOOM;
-  const isAtMin = zoom <= MIN_ZOOM;
-  const isAtDefault = zoom === INITIAL_ZOOM;
+  useEffect(() => {
+    zoomRef.current = zoom;
+    if (process.env.NODE_ENV !== "production") {
+      console.debug("[CABLES] ZoomLevelInput =", zoom);
+    }
+  }, [zoom]);
+
+  // Keep all zoom values owned here (not in CablesCanvas).
+  // When the patch becomes available, sync the CURRENT zoom (don't reset it).
+  useEffect(() => {
+    const syncZoomToPatch = () => {
+      window.CABLES?.patch?.setVariable("ZoomLevelInput", zoomRef.current);
+    };
+
+    // If patch is already ready (fast loads / client nav), sync once.
+    syncZoomToPatch();
+
+    const onPatchReady = () => syncZoomToPatch();
+    window.addEventListener("cables:patch-ready", onPatchReady);
+    return () => window.removeEventListener("cables:patch-ready", onPatchReady);
+  }, []);
+
+  const zoomIndex = Math.max(0, ZOOM_STATES.indexOf(zoom));
+  const isAtMax = zoomIndex >= ZOOM_STATES.length - 1;
+  const isAtMin = zoomIndex <= 0;
+  const isAtDefault = zoom === clampToZoomStates(DEFAULT_ZOOM);
 
   return (
     <div className="cables-controls">
       <button
         className={`cables-controls__button${isAtMax ? " cables-controls__button--inactive" : ""}`}
-        onClick={() => applyZoom(zoom + ZOOM_STEP)}
+        onClick={() => applyZoom(ZOOM_STATES[Math.min(ZOOM_STATES.length - 1, zoomIndex + 1)])}
         disabled={isAtMax}
       >
         <svg
@@ -52,7 +93,7 @@ export default function CablesControls() {
       </button>
       <button
         className={`cables-controls__button${isAtMin ? " cables-controls__button--inactive" : ""}`}
-        onClick={() => applyZoom(zoom - ZOOM_STEP)}
+        onClick={() => applyZoom(ZOOM_STATES[Math.max(0, zoomIndex - 1)])}
         disabled={isAtMin}
       >
         <svg
@@ -73,7 +114,7 @@ export default function CablesControls() {
       </button>
       <button
         className={`cables-controls__button cables-controls__button-reset${isAtDefault ? " cables-controls__button-reset--inactive" : ""}`}
-        onClick={() => applyZoom(INITIAL_ZOOM)}
+        onClick={() => applyZoom(DEFAULT_ZOOM)}
       >
         <svg
           width="20"

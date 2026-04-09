@@ -49,12 +49,11 @@ function CablesCanvas({
       },
       onFinishedLoading: () => {
         console.log("[CABLES] Finished loading");
-        patchRef.current?.setVariable("ZoomLevelInput", 1);
         patchRef.current?.setVariable("projectsData", projectsData);
+        window.dispatchEvent(new Event("cables:patch-ready"));
       },
       projectClickedSlug,
       variables: {
-        ZoomLevelInput: 1,
         projectsData,
       },
       ...patchOptionsProp,

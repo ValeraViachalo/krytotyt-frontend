@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "cables:update": "cables -e CdP6Jc -c -i -f -d \"public/cables\""
   },
   "dependencies": {
     "@sanity/block-content-to-react": "^3.0.0",
