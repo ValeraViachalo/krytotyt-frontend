@@ -33,10 +33,8 @@ export default class InteractionManager {
       // Mouse drag: suppress hover and show grabbing cursor.
       // Touch drag is different — dragging IS how you aim the centre pointer,
       // so we keep raycasting during touch drag (see below).
-      if (this.state.hoveredMesh !== null) {
-        this.state.hoveredMesh = null;
-        this._setCursor('grabbing');
-      }
+      this.state.hoveredMesh = null;
+      this._setCursor('grabbing');
       return;
     }
 
@@ -63,7 +61,14 @@ export default class InteractionManager {
       sy = h / 2;
     } else {
       const pos = s.mouseScreen;
-      if (!pos) return;
+      if (!pos) {
+        // Pointer has left the canvas — clear any stale hover immediately.
+        if (s.hoveredMesh !== null) {
+          s.hoveredMesh = null;
+          this._setCursor('grab');
+        }
+        return;
+      }
       sx = pos.x;
       sy = pos.y;
     }
@@ -101,7 +106,7 @@ export default class InteractionManager {
 
     // Don't change cursor on touch — there is no cursor on a touch screen
     if (!isTouch) {
-      this._setCursor(hitMesh ? 'pointer' : 'default');
+      this._setCursor(hitMesh ? 'pointer' : 'grab');
     }
   }
 
@@ -128,12 +133,31 @@ export default class InteractionManager {
 
     console.log('[InfiniteCanvas] navigate →', item.slug, item.name);
 
-    // 1. Direct callback (synchronous, simplest for Next.js)
+    // onItemTap fires instantly on every interaction — use it for haptics so
+    // the feedback is simultaneous with the first visual change.
+    if (typeof this.state.onItemTap === 'function') {
+      this.state.onItemTap(item);
+    }
+
+    if (isTouch) {
+      // Flash only the text label (not images) then navigate.
+      // clickFlash hides the hover display text for two frames while
+      // hoveredMesh stays set, so images keep their dimmed state.
+      this.state.clickFlash = true;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        this.state.clickFlash = false;
+        this._fireNavigation(item);
+      }));
+    } else {
+      this._fireNavigation(item);
+    }
+  }
+
+  _fireNavigation(item) {
     if (typeof this.state.onItemClick === 'function') {
       this.state.onItemClick(item);
     }
 
-    // 2. Native CustomEvent — attach via container.addEventListener('canvas:navigate', …)
     this.state.container.dispatchEvent(
       new CustomEvent('canvas:navigate', {
         detail:  { slug: item.slug, name: item.name },

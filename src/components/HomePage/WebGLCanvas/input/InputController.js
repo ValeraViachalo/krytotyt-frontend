@@ -54,6 +54,7 @@ export default class InputController {
     this._onMouseMove  = this._onMouseMove.bind(this);
     this._onMouseDown  = this._onMouseDown.bind(this);
     this._onMouseUp    = this._onMouseUp.bind(this);
+    this._onMouseLeave = this._onMouseLeave.bind(this);
     this._onWheel      = this._onWheel.bind(this);
     this._onTouchStart = this._onTouchStart.bind(this);
     this._onTouchMove  = this._onTouchMove.bind(this);
@@ -64,6 +65,7 @@ export default class InputController {
     const c = this.container;
     c.addEventListener('mousemove',  this._onMouseMove);
     c.addEventListener('mousedown',  this._onMouseDown);
+    c.addEventListener('mouseleave', this._onMouseLeave);
     window.addEventListener('mouseup', this._onMouseUp);
     c.addEventListener('wheel',      this._onWheel,      { passive: false });
     c.addEventListener('touchstart', this._onTouchStart, { passive: false });
@@ -75,6 +77,7 @@ export default class InputController {
     const c = this.container;
     c.removeEventListener('mousemove',  this._onMouseMove);
     c.removeEventListener('mousedown',  this._onMouseDown);
+    c.removeEventListener('mouseleave', this._onMouseLeave);
     window.removeEventListener('mouseup', this._onMouseUp);
     c.removeEventListener('wheel',      this._onWheel);
     c.removeEventListener('touchstart', this._onTouchStart);
@@ -167,6 +170,13 @@ export default class InputController {
     if (!this.state.isDragging) return;
     this.state.isDragging       = false;
     this.container.style.cursor = '';
+  }
+
+  _onMouseLeave(_e) {
+    // Pointer left the canvas area (moved over a sibling element above it,
+    // e.g. AboutPopup, or left the window). Clear mouseScreen so the
+    // InteractionManager knows to deactivate hover on the next frame.
+    this.state.mouseScreen = null;
   }
 
   // ── Wheel ────────────────────────────────────────────────────────────────────

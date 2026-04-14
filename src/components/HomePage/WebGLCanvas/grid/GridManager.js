@@ -309,7 +309,10 @@ export default class GridManager {
     const sLerp     = 1 - Math.pow(1 - scaleLerpSpeed,             delta * 60);
 
     const hovered  = this.state.hoveredMesh;
-    const hasHover = hovered !== null && !this.state.isDragging;
+    // On touch, dragging is how the user aims the centre pointer — hover should
+    // stay active throughout the gesture.  Only suppress hover on mouse drag.
+    const isTouch  = this.state.inputMode === 'touch';
+    const hasHover = hovered !== null && (!this.state.isDragging || isTouch);
     const now      = performance.now();
 
     for (const { mesh } of this.meshes) {
