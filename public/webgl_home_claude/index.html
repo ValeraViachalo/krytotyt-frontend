@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Infinite Canvas — WebGL</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+
+    #canvas-root {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      cursor: default;
+      touch-action: none;
+    }
+
+    /* Loading overlay — plain black screen, no text.
+       Fades out once canvas:loaded fires (≥5 images ready). */
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 9999;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+    #loading.hidden {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading"></div>
+  <div id="canvas-root"></div>
+
+  <!--
+    Import map — maps the bare "three" specifier to a CDN build.
+    Replace with your bundler's resolution in Next.js (three is resolved
+    automatically when installed via npm).
+  -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.167.1/build/three.module.js"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import { initInfiniteCanvas } from './src/InfiniteCanvas.js';
+
+    // Load web-haptics dynamically so a CDN failure never blocks the canvas
+    let _haptics = null;
+    import('https://esm.sh/web-haptics').then(m => {
+      _haptics = new m.WebHaptics();
+    }).catch(() => {});
+
+    // ── Placeholder item data ────────────────────────────────────────────────
+    // In production this comes from your CMS / API as:
+    //   [{ image: '/projects/foo/cover.jpg', name: 'Project Foo', slug: '/work/foo' }]
+    //
+    // image: null → ImageManager generates a coloured placeholder tile.
+    // image: URL  → loaded asynchronously; fallback to placeholder on error.
+
+    const CATEGORIES = [
+      'Interior', 'Kitchen', 'Storage', 'Living', 'Restaurant',
+      'Drawer',   'Office',  'Bath',    'Retail', 'Hospitality',
+    ];
+
+    function makeItems(count) {
+      return Array.from({ length: count }, (_, i) => ({
+        // Real photos from picsum.photos (seed-based, always the same image per index).
+        // For items where image is null, ImageManager generates transparent-shape placeholders
+        // which are useful for testing pixel-perfect hover on non-rectangular content.
+        image: `https://picsum.photos/seed/${i + 1}/800/560`,
+        name:  `${CATEGORIES[i % CATEGORIES.length]} ${Math.floor(i / CATEGORIES.length) + 1}`,
+        slug:  `/projects/${CATEGORIES[i % CATEGORIES.length].toLowerCase()}-${Math.floor(i / CATEGORIES.length) + 1}`,
+      }));
+    }
+
+    const items = makeItems(150);
+
+    // ── Mount ────────────────────────────────────────────────────────────────
+    const container = document.getElementById('canvas-root');
+    const loadingEl = document.getElementById('loading');
+
+    const cleanup = initInfiniteCanvas(container, {
+      items,
+      debug: true,
+
+      // Called when a user clicks an image (after the hover).
+      // Swap this for router.push(item.slug) in Next.js.
+      onItemClick: (item) => {
+        // Haptic feedback
+        try {
+          if (_haptics) _haptics.trigger('medium');
+          else if (navigator.vibrate) navigator.vibrate(10);
+        } catch (_) {}
+        alert(`Selected: ${item.name}\n${item.slug}`);
+      },
+
+      settings: {
+        // driftSpeed: 0.06,
+      },
+    });
+
+    // ── Navigation event ─────────────────────────────────────────────────────
+    // In Next.js you'd do: router.push(e.detail.slug)
+    container.addEventListener('canvas:navigate', (e) => {
+      console.info('Navigate to:', e.detail.slug, '—', e.detail.name);
+    });
+
+    // ── Hide loading screen once enough images are visible ───────────────────
+    // canvas:loaded fires when ≥5 textures have loaded (dispatched by InfiniteCanvas).
+    container.addEventListener('canvas:loaded', () => {
+      loadingEl.classList.add('hidden');
+      // Remove from DOM after the CSS transition ends
+      loadingEl.addEventListener('transitionend', () => {
+        if (loadingEl.parentNode) loadingEl.parentNode.removeChild(loadingEl);
+      }, { once: true });
+    });
+
+    // Safety fallback: hide after 8 s even if images are slow / offline
+    setTimeout(() => loadingEl.classList.add('hidden'), 8000);
+
+    // ── Cleanup on page unload (not needed for SPA but good practice) ─────────
+    window.addEventListener('beforeunload', cleanup);
+  </script>
+</body>
+</html>
