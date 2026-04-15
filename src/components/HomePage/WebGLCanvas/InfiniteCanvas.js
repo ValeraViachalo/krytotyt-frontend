@@ -426,8 +426,6 @@ function _createHoverDisplay(container, state) {
     transform: translateY(-50%);
     text-align: center;
     color: rgba(255,255,255,0.92);
-    font: 14px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    letter-spacing: 0.02em;
     pointer-events: none;
     z-index: 10000;
     opacity: 0;
