@@ -20,7 +20,7 @@ export default async function layout({ children }) {
 
   return (
     <UIProvider>
-      {/* <CablesCanvasProvider projectsData={projectsData} /> */}
+      <CablesCanvasProvider projectsData={projectsData} />
       <PageTransition>
         {children}
       </PageTransition>
