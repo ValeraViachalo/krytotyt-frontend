@@ -9,7 +9,7 @@ const DURATION = 3000;
 
 export default function Loader() {
   const [progress, setProgress] = useState(0);
-  const [hidden, setHidden] = useState(false);
+  const [hidden, setHidden] = useState(process.env.NEXT_PUBLIC_ENV !== "production");
   const rafRef = useRef(null);
   const startRef = useRef(null);
 

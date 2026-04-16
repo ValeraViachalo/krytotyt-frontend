@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { motion, useMotionValue, animate, AnimatePresence } from "framer-motion";
 import { useGesture } from "@use-gesture/react";
-import { generateLayout } from "./generateLayout";
+import { generateLayout } from "../ServicesMap/generateLayout";
 import clsx from "clsx";
 
 import "./ServicesMap.scss";

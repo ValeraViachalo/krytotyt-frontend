@@ -43,7 +43,8 @@ export default function CaseSmoothSlider({ data }) {
   const { ref, slider } = useSmooothy({
     variableWidth: true,
     lerpFactor: isMobile ? 0.1 : 0.2,
-    scrollSensitivity: 0.2,
+    scrollInput: false,
+    scrollSensitivity: 0.000002,
     dragSensitivity: 0.2,
     onUpdate: () => {
       const slides = slideRefs.current.filter(Boolean);
@@ -116,16 +117,19 @@ export default function CaseSmoothSlider({ data }) {
   // Resize slider once all images have loaded so sizes are correct
   const handleImageLoad = () => {
     loadedCount.current += 1;
-    if (loadedCount.current >= data.length) {
-      if (slider) slider.resize();
-      setAllLoaded(true);
+    if (loadedCount.current >= data.length && slider) {
+      slider.resize();
     }
   };
 
-  // Also resize after a short delay as a safety net (e.g. cached images)
+  // Once slider is ready, jump to the middle copy and reveal
   useEffect(() => {
     if (!slider) return;
-    const id = setTimeout(() => slider.resize(), 100);
+    // Resize and jump to the middle copy so infinite loop works both ways
+    slider.resize();
+    // slider.goToIndex(data.length);
+    // Allow the slider to lerp to position before revealing
+    const id = setTimeout(() => setAllLoaded(true), 300);
     return () => clearTimeout(id);
   }, [slider]);
 

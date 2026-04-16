@@ -1,15 +1,35 @@
 "use client";
 
-import React, { useEffect, useRef, useMemo, useCallback } from "react";
-import { generateLayout } from "../ServicesMap(Old)/generateLayout";
+import React, { useEffect, useRef, useMemo, useCallback, useState } from "react";
+import { generateLayout } from "./generateLayout";
 import clsx from "clsx";
 
 import "./ServicesMap.scss";
 
 /* ── Main component ──────────────────────────────────────────── */
 
+const MOBILE_BREAKPOINT = 768;
+const MOBILE_SENSITYVITY_MULTUPLIER = 1.5;
+
 export default function ServicesMap({ activeFilter, onFilterChange, data }) {
-  const categories = useMemo(() => generateLayout(data), [data]);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined"
+      ? window.innerWidth < MOBILE_BREAKPOINT
+      : false,
+  );
+
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const onChange = (e) => setIsMobile(e.matches);
+    setIsMobile(mql.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  const categories = useMemo(
+    () => generateLayout(data, { isMobile }),
+    [data, isMobile],
+  );
   const activeCategory = activeFilter === "all" ? null : activeFilter;
 
   /* ── Flatten categories → individual items with 2×2 duplication ── */
@@ -120,6 +140,8 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
   const scaleRef = useRef({ current: 0.8, target: 0.8 });
   const onFilterChangeRef = useRef(onFilterChange);
   onFilterChangeRef.current = onFilterChange;
+  const isMobileRef = useRef(isMobile);
+  isMobileRef.current = isMobile;
 
   /* ── Window resize ─────────────────────────────────────────── */
   useEffect(() => {
@@ -192,9 +214,12 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
       mouseRef.current.y.t = e.clientY / h;
 
       if (!dragRef.current.active) return;
-      const dx = e.clientX - dragRef.current.sx;
-      const dy = e.clientY - dragRef.current.sy;
-      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+      const rawDx = e.clientX - dragRef.current.sx;
+      const rawDy = e.clientY - dragRef.current.sy;
+      const mult = isMobileRef.current ? MOBILE_SENSITYVITY_MULTUPLIER : 1;
+      const dx = rawDx * mult;
+      const dy = rawDy * mult;
+      if (Math.abs(rawDx) > 3 || Math.abs(rawDy) > 3) {
         wasDragRef.current = true;
         /* Deactivate filter as soon as dragging starts */
         if (activeCategoryRef.current) {
@@ -234,8 +259,9 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
       const win = winRef.current;
 
       /* Ease toward target */
-      s.current.x += (s.target.x - s.current.x) * s.ease;
-      s.current.y += (s.target.y - s.current.y) * s.ease;
+      const ease = isMobileRef.current ? 0.15 : s.ease;
+      s.current.x += (s.target.x - s.current.x) * ease;
+      s.current.y += (s.target.y - s.current.y) * ease;
 
       /* Compute scroll deltas for parallax */
       s.delta.x.t = s.current.x - s.last.x;
@@ -281,7 +307,7 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
       s.last.x = s.current.x;
       s.last.y = s.current.y;
 
-      /* Smooth scale animation — same easing as scroll */
+      /* Smooth scale animation — slower than scroll easing */
       const sc = scaleRef.current;
       sc.current += (sc.target - sc.current) * s.ease;
       if (containerRef.current) {
@@ -310,7 +336,7 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
     if (activeCategory) {
       ctr.setAttribute("data-filter", activeCategory);
-      scaleRef.current.target = 1.2;
+      scaleRef.current.target = isMobile ? 0.9 : 1.2;
     } else {
       ctr.removeAttribute("data-filter");
       scaleRef.current.target = 0.8;
@@ -340,8 +366,8 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
     const s = scrollRef.current;
     const win = winRef.current;
-    const cx = win.w / 2.5;
-    const cy = win.h / 2.2;
+    const cx = isMobile ? win.w / 3 : win.w / 2.5;
+    const cy = isMobile ? win.h / 2 : win.h / 2.2;
 
     /* Category center in base tile coordinates */
     const catBaseX = cat.position.x + worldOffset.x;

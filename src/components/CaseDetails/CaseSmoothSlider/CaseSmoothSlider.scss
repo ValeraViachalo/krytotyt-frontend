@@ -7,6 +7,12 @@
 
   position: relative;
   margin-top: EM(70);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+
+  &.is-loaded {
+    opacity: 1;
+  }
 
   @include mq() {
     gap: EM(40);

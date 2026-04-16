@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import "./ServicesFilters.scss";
 import clsx from "clsx";
@@ -16,9 +16,32 @@ export default function ServicesFilters({
   onFilterChange,
 }) {
   const resetButtonText = preparedResetButtonText.ua;
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    if (container.scrollWidth <= container.clientWidth) return;
+
+    const active = container.querySelector(".filter-button--active");
+    if (!active) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const activeRect = active.getBoundingClientRect();
+    const currentLeft = container.scrollLeft;
+    const delta =
+      activeRect.left -
+      containerRect.left -
+      (containerRect.width - activeRect.width) / 2;
+
+    container.scrollTo({
+      left: currentLeft + delta,
+      behavior: "smooth",
+    });
+  }, [activeFilter]);
 
   return (
-    <div className="services-filter">
+    <div className="services-filter" ref={scrollRef}>
       <div className="services-filter-wrapper">
         <FilterButton
           filter={resetButtonText}
