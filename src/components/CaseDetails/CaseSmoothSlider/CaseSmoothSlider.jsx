@@ -127,7 +127,7 @@ export default function CaseSmoothSlider({ data }) {
     if (!slider) return;
     // Resize and jump to the middle copy so infinite loop works both ways
     slider.resize();
-    // slider.goToIndex(data.length);
+    // slider.goToIndex(0);
     // Allow the slider to lerp to position before revealing
     const id = setTimeout(() => setAllLoaded(true), 300);
     return () => clearTimeout(id);
