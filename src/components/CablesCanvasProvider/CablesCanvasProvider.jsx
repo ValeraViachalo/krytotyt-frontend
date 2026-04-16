@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import CablesCanvas from "@/components/HomePage/CablesCanvas/CablesCanvas";
+import WebGLCanvas from "@/components/HomePage/WebGLCanvas/WebGLCanvas";
 
 export default function CablesCanvasProvider({ projectsData }) {
   const pathname = usePathname();
@@ -19,7 +18,7 @@ export default function CablesCanvasProvider({ projectsData }) {
         opacity: isHome ? 1 : 0,
       }}
     >
-      <CablesCanvas projectsData={projectsData} />
+      <WebGLCanvas projectsData={projectsData} />
     </div>
   );
 }
