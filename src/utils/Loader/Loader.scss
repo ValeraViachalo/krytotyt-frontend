@@ -3,6 +3,7 @@
   inset: 0;
   z-index: 1000;
   background-color: $c-black;
+  color: $c-white;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -31,6 +32,7 @@
     background-color: #55555580;
     position: relative;
     overflow: hidden;
+    border-radius: 10em;
 
     &__bar {
       width: 100%;

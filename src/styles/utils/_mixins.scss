@@ -1,19 +1,19 @@
 @import "./variables";
 
-@mixin mq($size: $tablet, $type: 'max', $size-next: null) {
-  @if ($type == 'max') {
+@mixin mq($size: $tablet, $type: "max", $size-next: null) {
+  @if ($type == "max") {
     @media (max-width: #{$size}px) {
       @content;
     }
   }
 
-  @if ($type == 'min') {
+  @if ($type == "min") {
     @media (min-width: #{$size}px) {
       @content;
     }
   }
 
-  @if ($type == 'min-max') {
+  @if ($type == "min-max") {
     @media screen and (min-width: #{$size}px) and (max-width: #{$size-next}px) {
       @content;
     }
@@ -55,6 +55,12 @@
 @mixin hover {
   @media (hover: hover) {
     &:hover {
+      @content;
+    }
+  }
+
+  @media (hover: none) {
+    &:active {
       @content;
     }
   }

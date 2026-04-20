@@ -167,6 +167,10 @@
           opacity 0.3s ease,
           background-color 0.3s ease;
 
+          @include mq {
+            height: 1px;
+          }
+
         &:nth-child(1) {
           top: 30%;
         }

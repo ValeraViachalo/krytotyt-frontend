@@ -41,7 +41,7 @@ export const QUERY_CASES_DETAILS = `
       }
     },
     "images": images[]{
-      "imageUrl": image.asset->url,
+      "imageUrl": image.asset->url + "?w=1440&auto=format",
       showForCatalog
     },
 
@@ -91,7 +91,7 @@ export const QUERY_ABOUT_PAGE = `
 *[_type == "about" && _id == "about"][0]{
   "team": team{
       "list": list[]{
-        "image":    image.asset->url,
+        "image":    image.asset->url + "?w=1000&auto=format",
         "name":     coalesce(name[$lang], name.ua),
         "position": coalesce(position[$lang], position.ua),
         "text":     coalesce(text[$lang], text.ua)     // Portable Text array
