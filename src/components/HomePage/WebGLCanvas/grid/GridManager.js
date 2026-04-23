@@ -308,11 +308,22 @@ export default class GridManager {
     const hoverLerp = 1 - Math.pow(1 - (hoverLerpSpeed ?? 0.10),   delta * 60);
     const sLerp     = 1 - Math.pow(1 - scaleLerpSpeed,             delta * 60);
 
-    const hovered  = this.state.hoveredMesh;
-    // On touch, dragging is how the user aims the centre pointer — hover should
-    // stay active throughout the gesture.  Only suppress hover on mouse drag.
-    const isTouch  = this.state.inputMode === 'touch';
-    const hasHover = hovered !== null && (!this.state.isDragging || isTouch);
+    const hoveredFromRaycast = this.state.hoveredMesh;
+    const isTouch            = this.state.inputMode === 'touch';
+    const isDragging         = this.state.isDragging;
+    const clicked            = this.state.clickedMesh;
+
+    // Mouse: while dragging, InteractionManager clears hoveredMesh so panning
+    // does not fight the raycast — but that made every image lerp to full
+    // opacity for the whole mousedown→mouseup.  Use the mesh captured at
+    // mousedown for dim/scale until release (touch keeps live raycast hover).
+    const useDragSnapshot = isDragging && !isTouch;
+    const hovered =
+      useDragSnapshot ? (clicked || null) : hoveredFromRaycast;
+
+    const hasHover =
+      hovered !== null &&
+      (isTouch || !isDragging || !!clicked);
     const now      = performance.now();
 
     for (const { mesh } of this.meshes) {

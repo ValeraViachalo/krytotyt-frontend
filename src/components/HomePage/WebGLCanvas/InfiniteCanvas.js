@@ -445,7 +445,13 @@ function _createHoverDisplay(container, state) {
 
   return {
     update(_delta) {
-      const mesh  = state.hoveredMesh;
+      // Match GridManager: during mouse drag, raycast hover is cleared — keep
+      // showing the title for the mesh grabbed at mousedown (see clickedMesh).
+      const mesh =
+        state.hoveredMesh ??
+        (state.inputMode !== 'touch' && state.isDragging && state.clickedMesh
+          ? state.clickedMesh
+          : null);
       const flash = !!state.clickFlash;
 
       // Re-evaluate when either the hovered mesh or the flash flag changes
