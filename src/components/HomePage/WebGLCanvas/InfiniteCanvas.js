@@ -29,6 +29,10 @@ import ImageManager        from './images/ImageManager.js';
 import InteractionManager  from './interaction/InteractionManager.js';
 import DebugPanel          from './debug/DebugPanel.js';
 
+/** Home canvas zoom: min, default (middle), max — max matches the former default (1.0). */
+const CANVAS_ZOOM_STEPS              = [0.44, 0.67, 1.0];
+const CANVAS_ZOOM_DEFAULT_STEP_INDEX = 1;
+
 /**
  * @param {HTMLElement} container
  * @param {Object}      options
@@ -80,6 +84,10 @@ export function initInfiniteCanvas(container, options = {}) {
   // ── UI controls (zoom buttons) ───────────────────────────────────────────────
   const uiControls    = _createZoomControls(container, state);
   const hoverDisplay  = _createHoverDisplay(container, state);
+
+  // Avoid easing from Three.js default zoom (1) on first paint when default step is not 1.
+  renderer.camera.zoom = state.targetZoom;
+  renderer.camera.updateProjectionMatrix();
 
   // ── Engine — update order matters ───────────────────────────────────────────
   //   1. Input   — updates panX/panY during drag
@@ -170,7 +178,7 @@ function _createState(container, items, overrides) {
     velY: 0,
 
     // Zoom
-    targetZoom:  1,
+    targetZoom:  CANVAS_ZOOM_STEPS[CANVAS_ZOOM_DEFAULT_STEP_INDEX],
     zoomCursorX: null, // screen px — null means "use container centre"
     zoomCursorY: null,
 
@@ -253,7 +261,7 @@ function _createState(container, items, overrides) {
 
       // ── Debug ─────────────────────────────────────────────────────────────
       showBoundsDebug: false,
-      _lastZoom:       1, // written by camera wrapper, read by DebugPanel
+      _lastZoom:       CANVAS_ZOOM_STEPS[CANVAS_ZOOM_DEFAULT_STEP_INDEX], // overwritten each frame
 
       // Allow caller to override anything above
       ...overrides,
@@ -341,16 +349,16 @@ function _createZoomControls(container, state) {
   const zoomOutEl = makeBtn(SVG_MINUS, false);
   const resetEl   = makeBtn(SVG_RESET, true);
 
-  // ── Discrete zoom states ─────────────────────────────────────────────────────
-  // 5 steps: index 2 is the default, 0 is minimum (2× −), 4 is maximum (2× +).
-  const ZOOM_STEPS   = [0.44, 0.67, 1.0, 1.5, 2.25];
-  const DEFAULT_IDX  = 2;
-  const ZOOM_LABELS  = ['minimum', 'low', 'default', 'high', 'maximum'];
+  // ── Discrete zoom states (3): min, default, max — former default 1.0 is max (+).
+  const ZOOM_STEPS   = CANVAS_ZOOM_STEPS;
+  const DEFAULT_IDX  = CANVAS_ZOOM_DEFAULT_STEP_INDEX;
+  const ZOOM_LABELS  = ['minimum', 'default', 'maximum'];
   let   zoomIdx      = DEFAULT_IDX;
 
   // Clamp scroll/wheel zoom to the same range as the button steps.
   state.settings.minZoom = ZOOM_STEPS[0];
   state.settings.maxZoom = ZOOM_STEPS[ZOOM_STEPS.length - 1];
+  state.targetZoom       = ZOOM_STEPS[zoomIdx];
 
   function applyZoomStep(nextIdx) {
     zoomIdx          = Math.max(0, Math.min(ZOOM_STEPS.length - 1, nextIdx));
