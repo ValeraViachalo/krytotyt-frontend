@@ -18,6 +18,9 @@ export default class CameraController {
     this.state    = state;
     this.renderer = renderer;
     this.camera   = renderer.camera;
+    /** Normalised drift direction when cursor is exactly at centre (reused until cursor moves). */
+    this._lastDriftDirX = 1;
+    this._lastDriftDirY = 0;
   }
 
   update(delta) {
@@ -45,44 +48,48 @@ export default class CameraController {
   // ── Private ──────────────────────────────────────────────────────────────────
 
   /**
-   * Drift — the canvas slowly moves in the cursor's direction.
+   * Drift — the canvas slowly moves toward where the cursor sits relative to centre.
    *
    * Rules:
    *  • Stops completely whenever an image is hovered (mouse or touch).
-   *  • Speed is FIXED and cursor-distance-independent.  The cursor position
-   *    only sets the *direction* of drift; once outside the dead zone the
-   *    canvas accelerates at a constant rate regardless of how far the cursor
-   *    is from centre.
-   *  • The direction vector is normalised so diagonal drift (cursor in a
-   *    corner) has exactly the same speed as purely horizontal/vertical drift.
-   *  • When the cursor is inside the dead zone, cursor-driven drift stops but
-   *    the constant background drift (baseDriftX) continues so the canvas is
-   *    never fully static.
+   *  • Speed is fixed; only the *direction* follows the cursor.  Direction is the
+   *    normalised vector from screen centre to the cursor (same speed in corners
+   *    and near centre).
+   *  • At the exact centre, the last non-zero direction is reused so drift does
+   *    not drop to zero.
+   *  • Constant background drift (baseDriftX) is added on top.
    *  • In touch mode there is no cursor, so only the background drift runs.
    */
   _applyDrift(s, cfg, delta) {
-    const { driftSpeed, driftDeadZone, baseDriftX } = cfg;
+    const { driftSpeed, baseDriftX } = cfg;
 
     // Mouse: stop drift when an image is hovered so the user can read it.
     // Touch: centre pointer is always raycasting so hoveredMesh is nearly always
     // set — stopping drift on hover would kill it permanently on touch screens.
     if (s.hoveredMesh !== null && s.inputMode !== 'touch') return;
 
-    // Fixed drift speed (world units / s²) once past the dead zone
+    // Fixed drift acceleration (world units / s²); magnitude does not depend on cursor distance
     const speed = driftSpeed * 400;
 
     if (s.inputMode !== 'touch') {
-      // Build a direction vector based on which side of the dead zone we're on
-      let dx = 0, dy = 0;
-      if (Math.abs(s.mouse.x) > driftDeadZone) dx =  Math.sign(s.mouse.x);
-      if (Math.abs(s.mouse.y) > driftDeadZone) dy = -Math.sign(s.mouse.y); // screen Y inverted
-
-      // Normalise so diagonal == horizontal/vertical (no speed-up in corners)
-      const len = Math.sqrt(dx * dx + dy * dy);
-      if (len > 0) {
-        s.velX += (dx / len) * speed * delta;
-        s.velY += (dy / len) * speed * delta;
+      // Same axis convention as before: +X toward cursor right, +Y toward cursor up on screen
+      const mx = s.mouse.x;
+      const my = -s.mouse.y;
+      const len = Math.hypot(mx, my);
+      const eps = 1e-6;
+      let dirx;
+      let diry;
+      if (len > eps) {
+        dirx = mx / len;
+        diry = my / len;
+        this._lastDriftDirX = dirx;
+        this._lastDriftDirY = diry;
+      } else {
+        dirx = this._lastDriftDirX;
+        diry = this._lastDriftDirY;
       }
+      s.velX += dirx * speed * delta;
+      s.velY += diry * speed * delta;
     }
     // Touch: no cursor, so only background drift applies.
 

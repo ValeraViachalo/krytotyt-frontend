@@ -190,8 +190,7 @@ function _createState(container, items, overrides) {
       sizeVariationMax: 1.28,
 
       // ── Movement ──────────────────────────────────────────────────────────
-      driftSpeed:   0.10,    // max drift speed multiplier
-      driftDeadZone: 0.18,  // dead zone, fraction of half-screen
+      driftSpeed:   0.05,    // drift acceleration multiplier (see CameraController)
       baseDriftX:   1.2,    // constant background drift (world units/s)
       damping:      0.87,   // friction applied per 60fps frame
 
