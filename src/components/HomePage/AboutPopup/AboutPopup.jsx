@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 import "./AboutPopup.scss";
@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { anim, AutoHeightAnim } from "@/lib/helpers/anim";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import useIsMobile from "@/lib/helpers/useIsMobile";
 
 function buildRows(list = []) {
   const rows = [];
@@ -24,8 +25,13 @@ function buildRows(list = []) {
 }
 
 export default function AboutPopup({ data }) {
-  const [activeSection, setActiveSection] = useState(true);
+  const isMobile = useIsMobile();
+  const [activeSection, setActiveSection] = useState(false);
   const route = useRouter();
+
+  useEffect(() => {
+    setActiveSection(!isMobile);
+  }, [isMobile]);
 
   const handleSectionClick = () => {
     if (!activeSection) {

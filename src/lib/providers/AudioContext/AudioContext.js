@@ -12,7 +12,6 @@ import { getSoundcloudPlaylist } from "@/app/actions";
 const AudioContext = createContext();
 
 const SOUNDCLOUD_WIDGET_URL = "https://w.soundcloud.com/player/";
-const URL_PLAYLIST = process.env.SOUNDCLOUD_PLAYLIST_URL || "https://soundcloud.com/krytotytmusic/sets/home-mixes?si=d119afe4f7f14eeea60e00678789d5fb&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing";
 
 function buildEmbedUrl(url) {
   const encoded = encodeURIComponent(url);
@@ -40,6 +39,7 @@ export function AudioProvider({ children }) {
   const widgetRef = useRef(null);
   const progressInterval = useRef(null);
   const scriptRef = useRef(null);
+  const resetOnPlayRef = useRef(false);
 
   // ── 1. Mount iframe after hydration ──────────────────────────────────────
   useEffect(() => { setIsMounted(true); }, []);
@@ -81,6 +81,10 @@ export function AudioProvider({ children }) {
 
     widget.bind(window.SC.Widget.Events.PLAY, () => {
       setIsPlaying(true);
+      if (resetOnPlayRef.current) {
+        widget.seekTo(0);
+        resetOnPlayRef.current = false;
+      }
       widget.getCurrentSoundIndex((idx) => setCurrentTrackIndex(idx ?? 0));
       clearInterval(progressInterval.current);
       progressInterval.current = setInterval(() => {
@@ -101,10 +105,10 @@ export function AudioProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!isApiReady) return;
+    if (!isApiReady || !playlistMeta?.permalink_url) return;
     const timer = setTimeout(() => initWidget(), 800);
     return () => clearTimeout(timer);
-  }, [isApiReady, initWidget]);
+  }, [isApiReady, initWidget, playlistMeta]);
 
   // ── 4. Sync volume/playback when mute or ready state changes ─────────────
   useEffect(() => {
@@ -135,8 +139,38 @@ export function AudioProvider({ children }) {
   useEffect(() => () => clearInterval(progressInterval.current), []);
 
   // ── Exposed controls ──────────────────────────────────────────────────────
-  const next = useCallback(() => widgetRef.current?.next(), []);
-  const prev = useCallback(() => widgetRef.current?.prev(), []);
+  const next = useCallback(() => {
+    const widget = widgetRef.current;
+    const trackCount = playlistMeta?.tracks?.length ?? 0;
+    if (!widget || trackCount === 0) return;
+    widget.getCurrentSoundIndex((idx) => {
+      const current = idx ?? 0;
+      const target = current >= trackCount - 1 ? 0 : current + 1;
+      resetOnPlayRef.current = true;
+      widget.skip(target);
+      widget.seekTo(0);
+      setPosition(0);
+      setCurrentTrackIndex(target);
+      setIsMuted(false);
+    });
+  }, [playlistMeta]);
+
+  const prev = useCallback(() => {
+    const widget = widgetRef.current;
+    const trackCount = playlistMeta?.tracks?.length ?? 0;
+    if (!widget || trackCount === 0) return;
+    widget.getCurrentSoundIndex((idx) => {
+      const current = idx ?? 0;
+      const target = current <= 0 ? trackCount - 1 : current - 1;
+      resetOnPlayRef.current = true;
+      widget.skip(target);
+      widget.seekTo(0);
+      setPosition(0);
+      setCurrentTrackIndex(target);
+      setIsMuted(false);
+    });
+  }, [playlistMeta]);
+
   const toggle = useCallback(() => widgetRef.current?.toggle(), []);
   const seekTo = useCallback((ms) => widgetRef.current?.seekTo(ms), []);
 
@@ -160,11 +194,11 @@ export function AudioProvider({ children }) {
       {children}
 
       {/* Hidden iframe lives here so it persists across page navigations */}
-      {isMounted && (
+      {isMounted && playlistMeta?.permalink_url && (
         <iframe
           ref={iframeRef}
           title="SoundCloud Widget"
-          src={buildEmbedUrl(URL_PLAYLIST)}
+          src={buildEmbedUrl(playlistMeta.permalink_url)}
           allow="autoplay"
           style={{ display: "none" }}
         />

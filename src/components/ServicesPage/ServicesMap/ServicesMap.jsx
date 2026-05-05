@@ -11,6 +11,15 @@ import "./ServicesMap.scss";
 const MOBILE_BREAKPOINT = 768;
 const MOBILE_SENSITYVITY_MULTUPLIER = 1.5;
 
+/* Drift / inertia tuning — ported from HomePage WebGLCanvas (CameraController) */
+const DRIFT_SPEED = 0.3;       // drift acceleration multiplier
+const BASE_DRIFT_X = 1.2;      // constant background drift (units / s)
+const DAMPING = 0.87;          // friction per 60fps frame
+const VEL_CAP = 2400;          // max post-drag inertia velocity (units / s)
+const DRAG_VEL_EMA = 0.35;     // EMA smoothing factor for drag velocity
+const SNAP_EASE = 0.06;        // ease-rate when snapping to filtered category
+const SCALE_EASE = 0.06;       // ease-rate for scale animation
+
 export default function ServicesMap({ activeFilter, onFilterChange, data }) {
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== "undefined"
@@ -115,11 +124,12 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
   activeCategoryRef.current = activeCategory;
 
   const scrollRef = useRef({
-    ease: 0.06,
     current: { x: 0, y: 0 },
-    target: { x: 0, y: 0 },
+    vel: { x: 0, y: 0 },
     last: { x: 0, y: 0 },
     delta: { x: { c: 0, t: 0 }, y: { c: 0, t: 0 } },
+    driftDir: { x: 1, y: 0 },
+    snap: { active: false, x: 0, y: 0 },
   });
 
   const mouseRef = useRef({
@@ -129,10 +139,11 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
   const dragRef = useRef({
     active: false,
-    sx: 0,
-    sy: 0,
-    tx: 0,
-    ty: 0,
+    prevX: 0,
+    prevY: 0,
+    lastMoveTime: 0,
+    smoothVelX: 0,
+    smoothVelY: 0,
   });
 
   const winRef = useRef({ w: 0, h: 0 });
@@ -168,8 +179,11 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
     const s = scrollRef.current;
     const ix = -(baseTileW / 2) + winRef.current.w / 2 - 500;
     const iy = -(baseTileH / 2) + winRef.current.h / 2 - 500;
-    s.current.x = s.target.x = s.last.x = ix;
-    s.current.y = s.target.y = s.last.y = iy;
+    s.current.x = s.last.x = ix;
+    s.current.y = s.last.y = iy;
+    s.vel.x = 0;
+    s.vel.y = 0;
+    s.snap.active = false;
   }, [gridItems, baseTileW, baseTileH]);
 
   /* ── Measure item sizes after first paint ──────────────────── */
@@ -192,19 +206,35 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
     const onWheel = (e) => {
       e.preventDefault();
-      scrollRef.current.target.x -= e.deltaX * 0.4;
-      scrollRef.current.target.y -= e.deltaY * 0.4;
+      const s = scrollRef.current;
+      /* Cancel any in-flight snap so wheel pans immediately */
+      s.snap.active = false;
+
+      let dx = e.deltaX;
+      let dy = e.deltaY;
+      /* Normalise deltaMode (line / page → pixel equivalents) — matches WebGLCanvas */
+      if (e.deltaMode === 1) { dx *= 24; dy *= 24; }
+      if (e.deltaMode === 2) { dx *= 400; dy *= 400; }
+
+      /* Pan 1:1; sign matches the existing scroll-direction convention */
+      s.current.x -= dx;
+      s.current.y -= dy;
     };
 
     const onPointerDown = (e) => {
       if (e.button && e.button !== 0) return;
+      const s = scrollRef.current;
       dragRef.current.active = true;
       wasDragRef.current = false;
       ctr.classList.add("is-dragging");
-      dragRef.current.sx = e.clientX;
-      dragRef.current.sy = e.clientY;
-      dragRef.current.tx = scrollRef.current.target.x;
-      dragRef.current.ty = scrollRef.current.target.y;
+      s.snap.active = false;
+      s.vel.x = 0;
+      s.vel.y = 0;
+      dragRef.current.prevX = e.clientX;
+      dragRef.current.prevY = e.clientY;
+      dragRef.current.lastMoveTime = performance.now();
+      dragRef.current.smoothVelX = 0;
+      dragRef.current.smoothVelY = 0;
     };
 
     const onPointerMove = (e) => {
@@ -214,11 +244,13 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
       mouseRef.current.y.t = e.clientY / h;
 
       if (!dragRef.current.active) return;
-      const rawDx = e.clientX - dragRef.current.sx;
-      const rawDy = e.clientY - dragRef.current.sy;
+      const s = scrollRef.current;
+      const rawDx = e.clientX - dragRef.current.prevX;
+      const rawDy = e.clientY - dragRef.current.prevY;
       const mult = isMobileRef.current ? MOBILE_SENSITYVITY_MULTUPLIER : 1;
       const dx = rawDx * mult;
       const dy = rawDy * mult;
+
       if (Math.abs(rawDx) > 3 || Math.abs(rawDy) > 3) {
         wasDragRef.current = true;
         /* Deactivate filter as soon as dragging starts */
@@ -226,8 +258,29 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
           onFilterChangeRef.current("all");
         }
       }
-      scrollRef.current.target.x = dragRef.current.tx + dx;
-      scrollRef.current.target.y = dragRef.current.ty + dy;
+
+      /* 1:1 movement — content follows the cursor without smoothing */
+      s.current.x += dx;
+      s.current.y += dy;
+
+      /* Track event-time velocity (EMA-smoothed, capped) for post-release inertia */
+      const now = performance.now();
+      const eventDt = Math.max((now - dragRef.current.lastMoveTime) / 1000, 0.004);
+      dragRef.current.lastMoveTime = now;
+
+      const rawVelX = dx / eventDt;
+      const rawVelY = dy / eventDt;
+
+      dragRef.current.smoothVelX =
+        dragRef.current.smoothVelX * (1 - DRAG_VEL_EMA) + rawVelX * DRAG_VEL_EMA;
+      dragRef.current.smoothVelY =
+        dragRef.current.smoothVelY * (1 - DRAG_VEL_EMA) + rawVelY * DRAG_VEL_EMA;
+
+      s.vel.x = Math.max(-VEL_CAP, Math.min(VEL_CAP, dragRef.current.smoothVelX));
+      s.vel.y = Math.max(-VEL_CAP, Math.min(VEL_CAP, dragRef.current.smoothVelY));
+
+      dragRef.current.prevX = e.clientX;
+      dragRef.current.prevY = e.clientY;
     };
 
     const onPointerUp = () => {
@@ -252,26 +305,81 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
   useEffect(() => {
     const ts = tileSize;
     let firstFrame = true;
+    let lastTime = performance.now();
 
-    const tick = () => {
+    const tick = (now) => {
+      rafRef.current = requestAnimationFrame(tick);
+
+      /* Frame-rate-independent delta (capped so a hidden tab doesn't jump) */
+      const delta = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
       const s = scrollRef.current;
       const m = mouseRef.current;
       const win = winRef.current;
 
-      /* Ease toward target */
-      const ease = isMobileRef.current ? 0.15 : s.ease;
-      s.current.x += (s.target.x - s.current.x) * ease;
-      s.current.y += (s.target.y - s.current.y) * ease;
+      /* Mouse ease (used for parallax) */
+      m.x.c += (m.x.t - m.x.c) * 0.04;
+      m.y.c += (m.y.t - m.y.c) * 0.04;
+
+      /* ── Pan update ──────────────────────────────────────────
+         Modes, in priority order:
+           1. Snap-to-category (filter selection)  — eased toward target
+           2. Drag                                 — pan written by event handlers
+           3. Zoomed (filter active, no snap)      — frozen
+           4. Idle                                 — drift toward cursor + damping
+      */
+      if (s.snap.active) {
+        s.current.x += (s.snap.x - s.current.x) * SNAP_EASE;
+        s.current.y += (s.snap.y - s.current.y) * SNAP_EASE;
+        s.vel.x = 0;
+        s.vel.y = 0;
+        if (
+          Math.hypot(s.snap.x - s.current.x, s.snap.y - s.current.y) < 1
+        ) {
+          s.snap.active = false;
+        }
+      } else if (!dragRef.current.active && !activeCategoryRef.current) {
+        /* Drift — fixed magnitude, direction = normalised cursor offset.
+           Negated so the world drifts opposite the cursor (cursor right →
+           content drifts left), matching the WebGLCanvas feel. */
+        const speed = DRIFT_SPEED * 400;
+        const mxN = m.x.c - 0.5;
+        const myN = m.y.c - 0.5;
+        const len = Math.hypot(mxN, myN);
+        const eps = 1e-6;
+        let dirX;
+        let dirY;
+        if (len > eps) {
+          dirX = mxN / len;
+          dirY = myN / len;
+          s.driftDir.x = dirX;
+          s.driftDir.y = dirY;
+        } else {
+          dirX = s.driftDir.x;
+          dirY = s.driftDir.y;
+        }
+        s.vel.x -= dirX * speed * delta;
+        s.vel.y -= dirY * speed * delta;
+        /* Constant background drift so content is never fully static */
+        s.vel.x -= BASE_DRIFT_X * delta;
+
+        /* Frame-rate-independent exponential damping */
+        const factor = Math.pow(DAMPING, delta * 60);
+        s.vel.x *= factor;
+        s.vel.y *= factor;
+
+        /* Advance position from velocity */
+        s.current.x += s.vel.x * delta;
+        s.current.y += s.vel.y * delta;
+      }
+      /* When dragging, s.current is updated directly by pointermove. */
 
       /* Compute scroll deltas for parallax */
       s.delta.x.t = s.current.x - s.last.x;
       s.delta.y.t = s.current.y - s.last.y;
       s.delta.x.c += (s.delta.x.t - s.delta.x.c) * 0.04;
       s.delta.y.c += (s.delta.y.t - s.delta.y.c) * 0.04;
-
-      /* Mouse ease */
-      m.x.c += (m.x.t - m.x.c) * 0.04;
-      m.y.c += (m.y.t - m.y.c) * 0.04;
 
       const dirX = s.current.x > s.last.x ? "right" : "left";
       const dirY = s.current.y > s.last.y ? "down" : "up";
@@ -309,7 +417,7 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
 
       /* Smooth scale animation — slower than scroll easing */
       const sc = scaleRef.current;
-      sc.current += (sc.target - sc.current) * s.ease;
+      sc.current += (sc.target - sc.current) * SCALE_EASE;
       if (containerRef.current) {
         containerRef.current.style.transform = `scale(${sc.current})`;
       }
@@ -319,8 +427,6 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
         firstFrame = false;
         containerRef.current?.classList.add("is-ready");
       }
-
-      rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
@@ -385,9 +491,10 @@ export default function ServicesMap({ activeFilter, onFilterChange, data }) {
     const bestX = catBaseX + mx * periodX;
     const bestY = catBaseY + my * periodY;
 
-    s.target.x = -bestX + cx;
-    s.target.y = -bestY + cy;
-  }, [activeFilter, activeCategory, categories, worldOffset, baseTileW, baseTileH]);
+    s.snap.active = true;
+    s.snap.x = -bestX + cx;
+    s.snap.y = -bestY + cy;
+  }, [activeFilter, activeCategory, categories, worldOffset, baseTileW, baseTileH, isMobile]);
 
   /* ── Hover category dimming (event delegation) ────────────── */
   useEffect(() => {

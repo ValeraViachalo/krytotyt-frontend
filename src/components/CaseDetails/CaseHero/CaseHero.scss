@@ -1,17 +1,18 @@
 .case-details {
   .case-hero {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 
-    height: clamp(EM(850), 100svh, EM(1000));
+    min-height: EM(600);
+    // padding-top: 50svh;
 
     position: relative;
 
     @include mq() {
-      height: auto;
-      max-height: none;
-      padding-top: EM(100);
+      min-height: auto;
+      padding: EM(100) 0 EM(40);
+      align-items: center;
     }
 
     &-content {
@@ -24,6 +25,8 @@
       gap: EM(80);
 
       text-align: center;
+
+      padding-top: EM(240);
 
       @include mq() {
         gap: EM(48);
@@ -66,7 +69,7 @@
 
     &-buttons {
       position: absolute;
-      top: 50%;
+      top: 50svh;
       left: EM(70);
       right: EM(70);
       transform: translateY(-50%);
