@@ -12,6 +12,7 @@
   "dependencies": {
     "@sanity/block-content-to-react": "^3.0.0",
     "@use-gesture/react": "^10.3.1",
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "formik": "^2.4.9",
     "framer-motion": "^12.0.0",
