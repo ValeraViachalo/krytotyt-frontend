@@ -84,11 +84,11 @@ export default function AboutPopup({ data }) {
             <div className="about-popup-team">
               {buildRows(data.members).map((row, rowIdx) => (
                 <div className="about-popup-team__row" key={rowIdx}>
-                  {row.map((src, i) => (
+                  {row.map((image, i) => (
                     <div className="about-popup-team__member" key={i}>
                       <Image
-                        src={src}
-                        alt="team member"
+                        src={image.image}
+                        alt={image.name}
                         width={40}
                         height={40}
                       />

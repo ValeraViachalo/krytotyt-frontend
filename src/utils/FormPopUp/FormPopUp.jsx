@@ -23,7 +23,8 @@ export default function FormPopUp() {
         <motion.div
           className="form-pop-up-wrapper"
           key="form-popup"
-          {...anim(MenuAnim)}
+          initial={false}
+          exit={{ transition: { when: "afterChildren" } }}
         >
           <motion.div
             className="form-bg"
@@ -31,7 +32,7 @@ export default function FormPopUp() {
             key="form-bg"
             {...anim(MenuAnim)}
           />
-          <div className="form-pop-up">
+          <motion.div className="form-pop-up" {...anim(MenuAnim)}>
             <div className="form-pop-up-content">
               <p className="form-pop-up__text">{formText.title}</p>
               <ContactForm formText={formText.form} closeForm={closeForm} />
@@ -68,7 +69,7 @@ export default function FormPopUp() {
                 </defs>
               </svg>
             </button>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

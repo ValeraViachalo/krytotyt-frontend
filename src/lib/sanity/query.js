@@ -140,3 +140,12 @@ export const QUERY_HEADER = `
     }
   }
 `
+
+export const QUERY_HOME_PAGE = `
+{
+  "teamList": *[_type == "about" && _id == "about"][0].team.list[]{
+    "image": image.asset->url + "?w=100&auto=format",
+    "name": coalesce(name[$lang], name.ua),
+  }
+}
+`

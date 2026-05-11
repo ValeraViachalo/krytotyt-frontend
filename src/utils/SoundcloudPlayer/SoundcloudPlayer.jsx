@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAudio } from "@/lib/providers/AudioContext/AudioContext";
 import "./SoundcloudPlayer.scss";
+import Image from "next/image";
 
 const URL_PLAYLIST = "https://soundcloud.com/krytotytmusic";
 
@@ -37,7 +38,7 @@ export default function SoundcloudPlayer() {
         pendingSeekRef.current = pct;
       }
     },
-    [duration, isMuted, seekTo, setIsMuted]
+    [duration, isMuted, seekTo, setIsMuted],
   );
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function SoundcloudPlayer() {
       } catch {}
       setDragPct(computePct(e.clientX));
     },
-    [computePct]
+    [computePct],
   );
 
   const handlePointerMove = useCallback(
@@ -62,7 +63,7 @@ export default function SoundcloudPlayer() {
       if (dragPct === null) return;
       setDragPct(computePct(e.clientX));
     },
-    [dragPct, computePct]
+    [dragPct, computePct],
   );
 
   const handlePointerUp = useCallback(
@@ -76,7 +77,7 @@ export default function SoundcloudPlayer() {
       setPendingPct(pct);
       commitSeek(pct);
     },
-    [dragPct, computePct, commitSeek]
+    [dragPct, computePct, commitSeek],
   );
 
   const currentTrack = playlistMeta?.tracks?.[currentTrackIndex] ?? null;
@@ -150,24 +151,15 @@ export default function SoundcloudPlayer() {
           className="player__link"
           title="Open in SoundCloud"
         >
-          <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="player__link-icon">
-            <g clipPath="url(#clip0_3284_2470)">
-              <path
-                d="M9.99988 1.99998L1.99984 10M9.99988 1.99998L9.99988 8.85715M9.99988 1.99998L3.1427 1.99998"
-                stroke="white"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_3284_2470">
-                <rect width="12" height="12" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
+          <Image
+            src="/assets/icon/soundcloud-icon.svg"
+            alt="SoundCloud Icon"
+            width={42}
+            height={24}
+            className="player__link-icon"
+          />
         </a>
       </div>
     </div>
   );
 }
-

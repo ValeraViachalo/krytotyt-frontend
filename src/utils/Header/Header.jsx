@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import SoundcloudPlayer from "../SoundcloudPlayer/SoundcloudPlayer";
 import { useAudio } from "@/lib/providers/AudioContext/AudioContext";
 import { useFormPopUp } from "../FormPopUp/context";
+import Image from "next/image";
 
 const staticData = {
   nav: [
@@ -27,8 +28,15 @@ const staticData = {
       href: "/services",
     },
   ],
+  contactButton: "замовити проєкт",
   radioTitle: "радіо",
 };
+
+const presence = (isActiveItem) => ({
+  variants: logoAnim,
+  initial: "initial",
+  animate: isActiveItem ? "animate" : "exit",
+});
 
 export default function Header({ locale, headerData }) {
   const socials = headerData?.socials ?? [];
@@ -76,12 +84,6 @@ export default function Header({ locale, headerData }) {
     setActiveLogo(activeLogo !== 3 ? activeLogo + 1 : 1);
   }, [pathname]);
 
-  const presence = ({ isActiveItem }) => ({
-    variants: logoAnim,
-    initial: "initial",
-    animate: isActiveItem ? "animate" : "exit",
-  });
-
   return (
     <>
       <header
@@ -102,21 +104,21 @@ export default function Header({ locale, headerData }) {
               <AnimatePresence mode="sync" initial={false}>
                 <motion.img
                   key="logo-1"
-                  {...presence({ isActiveItem: activeLogo === 1 })}
+                  {...presence(activeLogo === 1)}
                   src={`/assets/logo-1.svg`}
                   alt=""
                   className="logo"
                 />
                 <motion.img
                   key="logo-2"
-                  {...presence({ isActiveItem: activeLogo === 2 })}
+                  {...presence(activeLogo === 2)}
                   src={`/assets/logo-2.svg`}
                   alt=""
                   className="logo"
                 />
                 <motion.img
                   key="logo-3"
-                  {...presence({ isActiveItem: activeLogo === 3 })}
+                  {...presence(activeLogo === 3)}
                   src={`/assets/logo-3.svg`}
                   alt=""
                   className="logo"
@@ -136,13 +138,6 @@ export default function Header({ locale, headerData }) {
                   {item.title}
                 </Link>
               ))}
-              <button
-                type="button"
-                className="nav-item"
-                onClick={openForm}
-              >
-                замовити
-              </button>
             </div>
 
             <button
@@ -157,14 +152,6 @@ export default function Header({ locale, headerData }) {
           </div>
           {!isMobile && (
             <div className="right">
-              <button
-                className="radio"
-                onClick={() => setIsMenuActive(!isMenuActive)}
-              >
-                <span className="radio-indicator"></span>
-                <span>{staticData.radioTitle}</span>
-              </button>
-
               <button
                 className={clsx("header-button", {
                   "header-button--playing": !isMuted,
@@ -244,6 +231,14 @@ export default function Header({ locale, headerData }) {
               </button>
 
               <button
+                className="radio"
+                onClick={() => setIsMenuActive(!isMenuActive)}
+              >
+                <span className="radio-indicator"></span>
+                <span>{staticData.radioTitle}</span>
+              </button>
+
+              <button
                 className="header-button"
                 onClick={() => setIsMenuActive(!isMenuActive)}
               >
@@ -286,48 +281,32 @@ export default function Header({ locale, headerData }) {
                 })}
               >
                 <SoundcloudPlayer />
-                <div className="bottom">
-                  {/* hidden for now */}
-                  {false && (
-                    <div className="lang-switch">
-                      <Link
-                        href="/"
-                        className={clsx("lang-switch__link", {
-                          "lang-switch__link--active": locale === "ua",
-                        })}
-                      >
-                        <span>укр</span>
-                      </Link>
-                      <Link
-                        href="/en"
-                        className={clsx("lang-switch__link", {
-                          "lang-switch__link--active": locale === "en",
-                        })}
-                      >
-                        <span>eng</span>
-                      </Link>
-                    </div>
-                  )}
-
-                  <div className="socials">
-                    {socials.map((item, index) => (
-                      <Link
-                        key={index}
-                        href={item.url}
-                        target="_blank"
-                        className="socials__link"
-                      >
-                        <img
-                          src={item.image}
-                          width={22}
-                          height={22}
-                          alt={item.name || "Social Icon"}
-                          className="socials__link-icon"
+                <div className="center">
+                  <button className="header-contact" onClick={openForm}>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 22 22"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="header-contact__icon"
+                    >
+                      <g clipPath="url(#clip0_40000889_9656)">
+                        <path
+                          d="M0.914062 21.0812H10.0807V19.2479H11.9141V17.4146H10.0807V15.5812H8.2474V19.2479H4.58073V17.4146H2.7474V13.7479H6.41406V11.9146H4.58073V10.0812H2.7474V11.9146H0.914062V21.0812ZM6.41406 15.5812H8.2474V13.7479H6.41406V15.5812ZM11.9141 17.4146H13.7474V15.5812H11.9141V17.4146ZM4.58073 10.0812H6.41406V8.24788H4.58073V10.0812ZM10.0807 15.5812H11.9141V13.7479H10.0807V15.5812ZM6.41406 11.9146H8.2474V10.0812H6.41406V11.9146ZM13.7474 15.5812H15.5807V13.7479H13.7474V15.5812ZM6.41406 8.24788H8.2474V6.41455H6.41406V8.24788ZM11.9141 13.7479H13.7474V11.9146H11.9141V13.7479ZM8.2474 10.0812H10.0807V8.24788H8.2474V10.0812ZM15.5807 13.7479H17.4141V11.9146H15.5807V13.7479ZM8.2474 6.41455H10.0807V4.58122H8.2474V6.41455ZM13.7474 11.9146H15.5807V10.0812H13.7474V11.9146ZM10.0807 8.24788H11.9141V6.41455H10.0807V8.24788ZM17.4141 11.9146H19.2474V10.0812H17.4141V11.9146ZM10.0807 4.58122H11.9141V2.74788H10.0807V4.58122ZM15.5807 10.0812H17.4141V8.24788H15.5807V10.0812ZM11.9141 6.41455H13.7474V4.58122H11.9141V6.41455ZM19.2474 10.0812H21.0807V4.58122H19.2474V6.41455H17.4141V8.24788H19.2474V10.0812ZM13.7474 4.58122H15.5807V2.74788H17.4141V0.914551H11.9141V2.74788H13.7474V4.58122ZM17.4141 4.58122H19.2474V2.74788H17.4141V4.58122Z"
+                          fill="black"
                         />
-                      </Link>
-                    ))}
-                  </div>
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_40000889_9656">
+                          <rect width="22" height="22" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    <span>{staticData.contactButton}</span>
+                  </button>
                 </div>
+                <MenuBottom locale={locale} socials={socials} />
               </div>
             </div>
           )}
@@ -352,15 +331,6 @@ export default function Header({ locale, headerData }) {
                       {item.title}
                     </Link>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMenuActive(false);
-                      openForm();
-                    }}
-                  >
-                    замовити
-                  </button>
                 </div>
               </div>
 
@@ -454,47 +424,32 @@ export default function Header({ locale, headerData }) {
                   </div>
                 </div>
                 <SoundcloudPlayer />
-                <div className="bottom">
-                  {false && (
-                    <div className="lang-switch">
-                      <Link
-                        href="/"
-                        className={clsx("lang-switch__link", {
-                          "lang-switch__link--active": locale === "ua",
-                        })}
-                      >
-                        <span>укр</span>
-                      </Link>
-                      <Link
-                        href="/en"
-                        className={clsx("lang-switch__link", {
-                          "lang-switch__link--active": locale === "en",
-                        })}
-                      >
-                        <span>eng</span>
-                      </Link>
-                    </div>
-                  )}
-
-                  <div className="socials">
-                    {socials.map((item, index) => (
-                      <Link
-                        key={index}
-                        href={item.url}
-                        target="_blank"
-                        className="socials__link"
-                      >
-                        <img
-                          src={item.image}
-                          width={22}
-                          height={22}
-                          alt={item.name || "Social Icon"}
-                          className="socials__link-icon"
+                <div className="center">
+                  <button className="header-contact" onClick={openForm}>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 22 22"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="header-contact__icon"
+                    >
+                      <g clipPath="url(#clip0_40000889_9656)">
+                        <path
+                          d="M0.914062 21.0812H10.0807V19.2479H11.9141V17.4146H10.0807V15.5812H8.2474V19.2479H4.58073V17.4146H2.7474V13.7479H6.41406V11.9146H4.58073V10.0812H2.7474V11.9146H0.914062V21.0812ZM6.41406 15.5812H8.2474V13.7479H6.41406V15.5812ZM11.9141 17.4146H13.7474V15.5812H11.9141V17.4146ZM4.58073 10.0812H6.41406V8.24788H4.58073V10.0812ZM10.0807 15.5812H11.9141V13.7479H10.0807V15.5812ZM6.41406 11.9146H8.2474V10.0812H6.41406V11.9146ZM13.7474 15.5812H15.5807V13.7479H13.7474V15.5812ZM6.41406 8.24788H8.2474V6.41455H6.41406V8.24788ZM11.9141 13.7479H13.7474V11.9146H11.9141V13.7479ZM8.2474 10.0812H10.0807V8.24788H8.2474V10.0812ZM15.5807 13.7479H17.4141V11.9146H15.5807V13.7479ZM8.2474 6.41455H10.0807V4.58122H8.2474V6.41455ZM13.7474 11.9146H15.5807V10.0812H13.7474V11.9146ZM10.0807 8.24788H11.9141V6.41455H10.0807V8.24788ZM17.4141 11.9146H19.2474V10.0812H17.4141V11.9146ZM10.0807 4.58122H11.9141V2.74788H10.0807V4.58122ZM15.5807 10.0812H17.4141V8.24788H15.5807V10.0812ZM11.9141 6.41455H13.7474V4.58122H11.9141V6.41455ZM19.2474 10.0812H21.0807V4.58122H19.2474V6.41455H17.4141V8.24788H19.2474V10.0812ZM13.7474 4.58122H15.5807V2.74788H17.4141V0.914551H11.9141V2.74788H13.7474V4.58122ZM17.4141 4.58122H19.2474V2.74788H17.4141V4.58122Z"
+                          fill="black"
                         />
-                      </Link>
-                    ))}
-                  </div>
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_40000889_9656">
+                          <rect width="22" height="22" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    <span>{staticData.contactButton}</span>
+                  </button>
                 </div>
+                <MenuBottom locale={locale} socials={socials} />
               </div>
             </div>
           </motion.div>
@@ -503,3 +458,121 @@ export default function Header({ locale, headerData }) {
     </>
   );
 }
+
+const MenuBottom = ({ locale, socials }) => {
+  const [isSocialsExpand, setIsSocialsExpand] = useState(false);
+  return (
+    <div
+      className={clsx("bottom", {
+        "bottom--socials-expand": isSocialsExpand,
+      })}
+    >
+      {/* hidden for now */}
+      {false && (
+        <motion.div className="lang-switch" key="lang-switch">
+          <Link
+            href="/"
+            className={clsx("lang-switch__link", {
+              "lang-switch__link--active": locale === "ua",
+            })}
+          >
+            <span>укр</span>
+          </Link>
+          <Link
+            href="/en"
+            className={clsx("lang-switch__link", {
+              "lang-switch__link--active": locale === "en",
+            })}
+          >
+            <span>eng</span>
+          </Link>
+        </motion.div>
+      )}
+      <div className="socials-list">
+        <button
+          className="inst-expand"
+          onClick={() => setIsSocialsExpand(!isSocialsExpand)}
+        >
+          <Image
+            src="/assets/socials/instagram.svg"
+            width={22}
+            height={22}
+            alt=""
+          />
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 13 13"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="inst-expand__arrow"
+          >
+            <g opacity="0.5">
+              <path
+                d="M0.25 6.25008C0.25 5.97393 0.473858 5.75007 0.75 5.75008L11.75 5.75008C12.0261 5.75008 12.25 5.97393 12.25 6.25008C12.25 6.52622 12.0261 6.75008 11.75 6.75008L0.750001 6.75007C0.473859 6.75007 0.25 6.52622 0.25 6.25008Z"
+                fill="white"
+                stroke="white"
+                strokeWidth="0.5"
+              />
+              <path
+                d="M6.24992 0.25C6.52607 0.25 6.74993 0.473858 6.74992 0.75L6.74992 11.75C6.74992 12.0261 6.52607 12.25 6.24992 12.25C5.97378 12.25 5.74992 12.0261 5.74992 11.75L5.74993 0.750001C5.74993 0.473859 5.97378 0.25 6.24992 0.25Z"
+                fill="white"
+                stroke="white"
+                strokeWidth="0.5"
+              />
+            </g>
+          </svg>
+        </button>
+        <div className="socials-list-wrapper">
+          <AnimatePresence mode="sync" initial={false}>
+            <motion.div
+              className="static-socials"
+              {...presence(!isSocialsExpand)}
+              key="static-socials--expanded"
+            >
+              {socials.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.url}
+                  target="_blank"
+                  className="static-socials__link"
+                >
+                  <img
+                    src={item.image}
+                    width={22}
+                    height={22}
+                    alt={item.name || "Social Icon"}
+                    className="static-socials__link-icon"
+                  />
+                </Link>
+              ))}
+            </motion.div>
+            <motion.div
+              className="static-socials"
+              {...presence(isSocialsExpand)}
+              key="static-socials--collapsed"
+            >
+              {socials.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.url}
+                  target="_blank"
+                  className="static-socials__link"
+                >
+                  <img
+                    src={item.image}
+                    width={22}
+                    height={22}
+                    alt={item.name || "Social Icon"}
+                    className="static-socials__link-icon"
+                  />
+                  <span>музика</span>
+                </Link>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+};

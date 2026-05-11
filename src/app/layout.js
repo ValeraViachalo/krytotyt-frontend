@@ -3,6 +3,7 @@ import "@/styles/reset.scss";
 import { defaultMetadata } from "@/lib/helpers/defaultMetadata";
 import { AudioProvider } from "@/lib/providers/AudioContext/AudioContext";
 import Loader from "@/utils/Loader/Loader";
+import { Analytics } from "@vercel/analytics/next"
 
 const neueHaasDisplay = localFont({
   src: [
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
           <Loader />
           {children}
         </AudioProvider>
+        <Analytics />
       </body>
     </html>
   );

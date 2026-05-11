@@ -74,12 +74,12 @@
 
   &__link {
     position: absolute;
-    top: EM(12);
-    right: EM(12);
+    top: EM(7);
+    right: EM(10);
     transition: opacity 0.3s ease;
 
-    width: EM(20);
-    height: EM(20);
+    width: EM(52);
+    height: EM(28);
 
     display: flex;
     align-items: center;
@@ -90,8 +90,8 @@
     }
 
     &-icon {
-      width: EM(12);
-      height: EM(12);
+      width: EM(42);
+      height: EM(24);
     }
   }
 }

@@ -1,3 +1,154 @@
+@mixin menu-bottom {
+  .bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: EM(8);
+
+    &--socials-expand {
+      .lang-switch {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease !important;
+      }
+
+      .inst-expand__arrow {
+        path:nth-of-type(2) {
+          transform: scaleY(0);
+        }
+      }
+    }
+
+    .lang-switch {
+      background: rgba(85, 85, 85, 0.5);
+      backdrop-filter: blur(27px);
+      display: flex;
+      align-items: center;
+      border-radius: EM(50);
+      overflow: hidden;
+      transition: opacity 0.3s 0.4s ease;
+
+      &__link {
+        display: block;
+        padding: EM(16) EM(24);
+        border-radius: EM(30);
+        transition:
+          color 0.3s ease,
+          background-color 0.3s ease,
+          opacity 0.3s ease;
+
+        &--active {
+          background-color: #fff;
+          color: $c-black;
+          opacity: 1 !important;
+          pointer-events: none;
+        }
+
+        @include hover {
+          opacity: 0.7;
+        }
+      }
+    }
+
+    .socials {
+      display: flex;
+      align-items: center;
+      gap: EM(4);
+      display: none;
+
+      &__link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: EM(48);
+        height: EM(48);
+        border-radius: EM(50);
+        background: rgba(85, 85, 85, 0.5);
+        backdrop-filter: blur(27px);
+        transition: opacity 0.3s ease;
+
+        @include hover {
+          opacity: 0.7;
+        }
+
+        &-icon {
+          width: EM(22);
+          height: EM(22);
+        }
+      }
+    }
+  }
+
+  .socials-list {
+    display: flex;
+    gap: EM(4);
+    transition:
+      right 0.3s ease,
+      left 0.3s ease;
+
+    .inst-expand {
+      display: flex;
+      align-items: center;
+      gap: EM(10);
+      cursor: pointer;
+      width: fit-content;
+      border-radius: EM(50);
+      background: rgba(85, 85, 85, 0.5);
+      backdrop-filter: blur(27px);
+      transition: opacity 0.3s ease;
+      padding: EM(13);
+
+      @include hover {
+        opacity: 0.7;
+      }
+
+      &__arrow {
+        width: EM(12);
+        height: EM(12);
+        transition: transform 0.3s ease;
+
+        path {
+          transition: transform 0.3s ease;
+          transform-origin: center;
+        }
+      }
+    }
+
+    .socials-list-wrapper {
+      display: flex;
+    }
+
+    .static-socials {
+      display: flex;
+      align-items: center;
+      gap: EM(4);
+
+      &__link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        // width: EM(48);
+        // height: EM(48);
+        padding: EM(13);
+        gap: EM(10);
+        border-radius: EM(50);
+        background: rgba(85, 85, 85, 0.5);
+        backdrop-filter: blur(27px);
+        transition: opacity 0.3s ease;
+
+        @include hover {
+          opacity: 0.7;
+        }
+
+        &-icon {
+          width: EM(22);
+          height: EM(22);
+        }
+      }
+    }
+  }
+}
+
 .header {
   max-width: var(--size-container);
   width: 100%;
@@ -97,6 +248,7 @@
       display: flex;
       align-items: center;
       gap: EM(48);
+      transform: translateY(EM(-8));
 
       @include mq() {
         display: none;
@@ -186,9 +338,10 @@
   .right {
     display: flex;
     align-items: flex-start;
-    gap: EM(32);
+    gap: calc(EM(32) - EM(12));
     position: relative;
-    padding-top: EM(6);
+    // padding-top: EM(6);
+    transform: translateY(EM(-8));
 
     @include mq() {
       display: none;
@@ -198,6 +351,7 @@
       display: flex;
       align-items: center;
       gap: EM(8);
+      padding: EM(6) 0;
 
       &-indicator {
         width: EM(6);
@@ -209,12 +363,13 @@
     }
 
     .header-button {
-      width: EM(21);
-      height: EM(21);
+      width: calc(EM(21) + EM(12));
+      height: calc(EM(21) + EM(12));
       opacity: 0.3;
       transition:
         opacity 0.3s ease,
         filter 0.3s ease;
+      padding: EM(6);
 
       @include hover {
         opacity: 1;
@@ -243,82 +398,67 @@
 
       pointer-events: none;
 
-      // Animate children individually to preserve their backdrop-filter
-      > * {
+      // Only skip .bottom — its children have backdrop-filter
+      > *:not(.bottom) {
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.2s $ease-in-expo;
+      }
+
+      // Animate backdrop-filter elements directly (safe — own opacity is fine)
+      .bottom .lang-switch,
+      .bottom .socials__link,
+      .bottom .socials-list .inst-expand,
+      .bottom .socials-list .static-socials__link {
+        opacity: 0;
+        transition: opacity 0.2s $ease-in-expo;
       }
 
       &--active {
         pointer-events: auto;
 
-        > * {
+        > *:not(.bottom) {
           opacity: 1;
+          transition: opacity 0.4s $ease-out-expo;
+        }
+
+        .bottom .lang-switch,
+        .bottom .socials__link,
+        .bottom .socials-list .inst-expand,
+        .bottom .socials-list .static-socials__link {
+          opacity: 1;
+          transition: opacity 0.4s $ease-out-expo;
         }
       }
 
-      .bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+      .center {
         margin-top: EM(8);
 
-        .lang-switch {
-          background: rgba(85, 85, 85, 0.5);
-          backdrop-filter: blur(27px);
+        .header-contact {
+          width: 100%;
+          padding: EM(13) 0;
+          border-radius: EM(100);
+          background-color: $c-green-100;
+          color: $c-black;
+
           display: flex;
           align-items: center;
-          border-radius: EM(50);
+          justify-content: center;
+          gap: EM(10);
 
-          &__link {
-            display: block;
-            padding: EM(16) EM(24);
-            border-radius: EM(30);
-            transition:
-              color 0.3s ease,
-              background-color 0.3s ease,
-              opacity 0.3s ease;
+          transition: background-color 0.3s ease;
 
-            &--active {
-              background-color: #fff;
-              color: $c-black;
-              opacity: 1 !important;
-              pointer-events: none;
-            }
-
-            @include hover {
-              opacity: 0.7;
-            }
+          @include hover {
+            background-color: $c-green-80;
           }
-        }
 
-        .socials {
-          display: flex;
-          align-items: center;
-          gap: EM(4);
-
-          &__link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: EM(48);
-            height: EM(48);
-            border-radius: EM(50);
-            background: rgba(85, 85, 85, 0.5);
-            backdrop-filter: blur(27px);
-            transition: opacity 0.3s ease;
-
-            @include hover {
-              opacity: 0.7;
-            }
-
-            &-icon {
-              width: EM(22);
-              height: EM(22);
-            }
+          &__icon {
+            width: EM(22);
+            height: EM(22);
           }
         }
       }
+
+      @include menu-bottom;
     }
   }
 }
@@ -359,6 +499,36 @@
     max-width: EM(400);
     margin: 0 auto;
 
+    // Only skip .bottom — its children have backdrop-filter
+    > *:not(.bottom) {
+      opacity: 0;
+      transition: opacity 0.2s $ease-in-expo;
+    }
+
+    // Animate backdrop-filter elements directly (safe — own opacity is fine)
+    .bottom .lang-switch,
+    .bottom .socials__link,
+    .bottom .socials-list .inst-expand,
+    .bottom .socials-list .static-socials__link {
+      opacity: 0;
+      transition: opacity 0.2s $ease-in-expo;
+    }
+
+    &--active {
+      > *:not(.bottom) {
+        opacity: 1;
+        transition: opacity 0.4s $ease-out-expo;
+      }
+
+      .bottom .lang-switch,
+      .bottom .socials__link,
+      .bottom .socials-list .inst-expand,
+      .bottom .socials-list .static-socials__link {
+        opacity: 1;
+        transition: opacity 0.4s $ease-out-expo;
+      }
+    }
+
     .top {
       display: flex;
       align-items: center;
@@ -396,69 +566,37 @@
       }
     }
 
-    .bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: EM(12);
+    .center {
+      margin-top: EM(8);
 
-      .lang-switch {
-        background: rgba(85, 85, 85, 0.5);
-        backdrop-filter: blur(27px);
+      .header-contact {
+        width: 100%;
+        padding: EM(13) 0;
+        border-radius: EM(100);
+        background-color: $c-green-100;
+        color: $c-black;
+
         display: flex;
         align-items: center;
-        border-radius: EM(50);
+        justify-content: center;
+        gap: EM(10);
 
-        &__link {
-          display: block;
-          padding: EM(16) EM(24);
-          border-radius: EM(30);
-          transition:
-            color 0.3s ease,
-            background-color 0.3s ease,
-            opacity 0.3s ease;
+        transition: background-color 0.3s ease;
 
-          &--active {
-            background-color: #fff;
-            color: $c-black;
-            opacity: 1 !important;
-            pointer-events: none;
-          }
-
-          @include hover {
-            opacity: 0.7;
-          }
+        @include hover {
+          background-color: $c-green-80;
         }
-      }
 
-      .socials {
-        display: flex;
-        align-items: center;
-        gap: EM(4);
-
-        &__link {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: EM(48);
-          height: EM(48);
-          border-radius: EM(50);
-          background: rgba(85, 85, 85, 0.5);
-          backdrop-filter: blur(27px);
-          transition: opacity 0.3s ease;
-
-          @include hover {
-            opacity: 0.7;
-          }
-
-          &-icon {
-            width: EM(22);
-            height: EM(22);
-          }
+        &__icon {
+          width: EM(22);
+          height: EM(22);
         }
       }
     }
+
+    @include menu-bottom;
   }
+
 }
 
 .body {

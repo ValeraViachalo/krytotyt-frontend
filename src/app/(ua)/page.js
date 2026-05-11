@@ -1,19 +1,20 @@
 import HomePage from '@/components/HomePage/HomePage'
 
-import preparedTeamData from '@/app/preparedData/aboutData.json'
-import AboutPopup from '@/components/HomePage/AboutPopup/AboutPopup';
+import { client } from '@/lib/sanity/client';
+import { QUERY_HOME_PAGE } from '@/lib/sanity/query';
 
-export default function page() {
-  // console.log(preparedTeamData);
+export const revalidate = 60;
+
+export default async function page() {
+  const data = await client.fetch(QUERY_HOME_PAGE, { lang: 'ua' })
+  console.log(data);
   
   const teamData = {
     title: "Ми є креативна формація",
     buttonText: "більше",
     hiddenText: "хто ми",
-    members: preparedTeamData?.team?.list?.map((currMember) => currMember?.image),
+    members: data?.teamList,
   }
-
-  console.log(teamData);
   
   return (
     <HomePage data={teamData} />
