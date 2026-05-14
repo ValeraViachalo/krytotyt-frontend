@@ -138,6 +138,10 @@ export const QUERY_HEADER = `
       name,
       "image": image.asset->url,
       url
+    },
+    "instagramLinks": instagramLinks[]{
+      name,
+      url
     }
   }
 `

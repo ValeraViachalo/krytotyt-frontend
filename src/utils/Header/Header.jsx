@@ -40,6 +40,7 @@ const presence = (isActiveItem) => ({
 
 export default function Header({ locale, headerData }) {
   const socials = headerData?.socials ?? [];
+  const instagramLinks = headerData?.instagramLinks ?? [];
   const [activeLogo, setActiveLogo] = useState(1);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const { isMuted, setIsMuted, isPlayerReady, next, prev } = useAudio();
@@ -306,7 +307,11 @@ export default function Header({ locale, headerData }) {
                     <span>{staticData.contactButton}</span>
                   </button>
                 </div>
-                <MenuBottom locale={locale} socials={socials} />
+                <MenuBottom
+                  locale={locale}
+                  socials={socials}
+                  instagramLinks={instagramLinks}
+                />
               </div>
             </div>
           )}
@@ -449,7 +454,11 @@ export default function Header({ locale, headerData }) {
                     <span>{staticData.contactButton}</span>
                   </button>
                 </div>
-                <MenuBottom locale={locale} socials={socials} />
+                <MenuBottom
+                  locale={locale}
+                  socials={socials}
+                  instagramLinks={instagramLinks}
+                />
               </div>
             </div>
           </motion.div>
@@ -459,7 +468,7 @@ export default function Header({ locale, headerData }) {
   );
 }
 
-const MenuBottom = ({ locale, socials }) => {
+const MenuBottom = ({ locale, socials, instagramLinks = [] }) => {
   const [isSocialsExpand, setIsSocialsExpand] = useState(false);
   return (
     <div
@@ -548,25 +557,25 @@ const MenuBottom = ({ locale, socials }) => {
               ))}
             </motion.div>
             <motion.div
-              className="static-socials"
+              className="static-socials static-socials--instagram"
               {...presence(isSocialsExpand)}
-              key="static-socials--collapsed"
+              key="static-socials--instagram"
             >
-              {socials.map((item, index) => (
+              {instagramLinks.map((item, index) => (
                 <Link
                   key={index}
                   href={item.url}
                   target="_blank"
                   className="static-socials__link"
                 >
-                  <img
-                    src={item.image}
+                  <Image
+                    src="/assets/socials/instagram.svg"
                     width={22}
                     height={22}
-                    alt={item.name || "Social Icon"}
+                    alt=""
                     className="static-socials__link-icon"
                   />
-                  <span>музика</span>
+                  <span>{item.name}</span>
                 </Link>
               ))}
             </motion.div>
