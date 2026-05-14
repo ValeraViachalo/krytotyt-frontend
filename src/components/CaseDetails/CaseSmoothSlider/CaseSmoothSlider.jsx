@@ -31,14 +31,41 @@ export function useSmooothy(config) {
   return { ref: refCallback, slider };
 }
 
+/** Extract the 11-char video id from any common YouTube url shape */
+function getYouTubeId(url) {
+  if (!url) return null;
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:.*[?&]v=|embed\/|shorts\/|v\/))([A-Za-z0-9_-]{11})/
+  );
+  return match ? match[1] : null;
+}
+
 /** component */
 
-export default function CaseSmoothSlider({ data }) {
+export default function CaseSmoothSlider({ data, videoUrl }) {
   const slideRefs = useRef([]);
   const containerRef = useRef(null);
   const loadedCount = useRef(0);
   const [allLoaded, setAllLoaded] = useState(false);
-  const isMobile = useIsMobile();  
+  const [playingVideoIndex, setPlayingVideoIndex] = useState(null);
+  const isMobile = useIsMobile();
+
+  const images = Array.isArray(data) ? data : [];
+  const videoId = getYouTubeId(videoUrl);
+
+  // The video, when present, is the first slide on mobile and the second slide
+  // (after the first image) on desktop. The slider triples its slides to fake
+  // an infinite loop, so the video copy must be part of that base set.
+  const imageSlides = images.map((image) => ({ type: "image", ...image }));
+  const videoPosition = isMobile ? 0 : 1;
+  const baseSlides = videoId
+    ? [
+        ...imageSlides.slice(0, videoPosition),
+        { type: "video", videoId },
+        ...imageSlides.slice(videoPosition),
+      ]
+    : imageSlides;
+  const slides = [...baseSlides, ...baseSlides, ...baseSlides];
 
   const { ref, slider } = useSmooothy({
     variableWidth: true,
@@ -117,7 +144,7 @@ export default function CaseSmoothSlider({ data }) {
   // Resize slider once all images have loaded so sizes are correct
   const handleImageLoad = () => {
     loadedCount.current += 1;
-    if (loadedCount.current >= data.length && slider) {
+    if (loadedCount.current >= baseSlides.length && slider) {
       slider.resize();
     }
   };
@@ -136,21 +163,55 @@ export default function CaseSmoothSlider({ data }) {
   return (
     <div className={`case-slider${allLoaded ? ' is-loaded' : ''}`}>
       <div className="smooth-slider" ref={(node) => { ref(node); containerRef.current = node; }}>
-        {[...data, ...data, ...data].map((slide, i) => (
-          <div key={i} className="smooth-slider__slide"
+        {slides.map((slide, i) => (
+          <div key={i} className={`smooth-slider__slide${slide.type === "video" ? " smooth-slider__slide--video" : ""}`}
             ref={(el) => (slideRefs.current[i] = el)}
             onClick={() => slider.goToIndex(i)}
           >
             <div className="smooth-slider__slide-inner">
-              <img
-                src={slide?.imageUrl}
-                alt={`Slide ${i}`}
-                className="smooth-slider__slide-image"
-                onLoad={handleImageLoad}
-                style={{ 
-                  aspectRatio: `${slide?.width} / ${slide?.height}`,
-                }}
-              />
+              {slide.type === "video" ? (
+                <div className="smooth-slider__video">
+                  {playingVideoIndex === i ? (
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${slide.videoId}?autoplay=1&rel=0`}
+                      title="YouTube video"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <button
+                      type="button"
+                      className="smooth-slider__video-poster"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPlayingVideoIndex(i);
+                      }}
+                      aria-label="Відтворити відео"
+                    >
+                      <img
+                        src={`https://img.youtube.com/vi/${slide.videoId}/maxresdefault.jpg`}
+                        alt="Прев'ю відео"
+                        onLoad={handleImageLoad}
+                        onError={(e) => {
+                          e.currentTarget.src = `https://img.youtube.com/vi/${slide.videoId}/hqdefault.jpg`;
+                        }}
+                      />
+                      <span className="smooth-slider__video-play" />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <img
+                  src={slide?.imageUrl}
+                  alt={`Slide ${i}`}
+                  className="smooth-slider__slide-image"
+                  onLoad={handleImageLoad}
+                  style={{
+                    aspectRatio: `${slide?.width} / ${slide?.height}`,
+                  }}
+                />
+              )}
             </div>
           </div>
         ))}

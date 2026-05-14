@@ -28,6 +28,7 @@ export const QUERY_CASES_DETAILS = `
     "name": coalesce(name[$lang], name.ua),
     "slug": slug.current,
     "text": coalesce(text[$lang], text.ua),
+    videoUrl,
     projectType->{
       "name": coalesce(name[$lang], name.ua),
       "slug": slug.current

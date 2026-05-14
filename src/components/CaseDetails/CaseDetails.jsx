@@ -17,7 +17,7 @@ export default function CaseDetails({ data }) {
     <main className="case-details page--white">
       <CaseHero data={data} />
       {/* <CaseSlider data={data?.images} /> */}
-      <CaseSmoothSlider key={pathname} data={data?.images} />
+      <CaseSmoothSlider key={pathname} data={data?.images} videoUrl={data?.videoUrl} />
       <div className="case-details__button">
         <button className="button" onClick={openForm}>
           <span className="button__text">замовити проект</span>
