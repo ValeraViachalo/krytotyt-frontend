@@ -4,10 +4,15 @@ import React, { useState, useEffect, useRef } from 'react'
 import "./Loader.scss";
 import Image from 'next/image';
 import clsx from 'clsx';
+import { usePathname } from 'next/navigation';
 
 const DURATION = 3000;
 
 export default function Loader() {
+  const pathname = usePathname();
+  // Lock to the page the site was first loaded on. Client-side navigating
+  // to "/" later must not re-trigger the loader.
+  const startedOnHomeRef = useRef(pathname === "/");
   const [progress, setProgress] = useState(0);
   const [hidden, setHidden] = useState(process.env.NEXT_PUBLIC_ENV !== "production");
   const rafRef = useRef(null);
@@ -35,7 +40,7 @@ export default function Loader() {
     return () => clearTimeout(timeout);
   }, [progress]);
 
-  if (hidden) return null;
+  if (!startedOnHomeRef.current || hidden) return null;
 
   return (
     <div className={clsx('loader', { 'is-done': progress >= 100 })}>

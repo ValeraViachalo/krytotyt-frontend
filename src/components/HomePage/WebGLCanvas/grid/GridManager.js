@@ -87,10 +87,22 @@ export default class GridManager {
       const col  = cellIdx % cols;
       const row  = Math.floor(cellIdx / cols);
 
-      // Per-item size variation for an organic look
-      const sizeK = this._rand(cfg.sizeVariationMin, cfg.sizeVariationMax);
-      const planeW = cfg.cellWidth  * sizeK;
-      const planeH = cfg.cellHeight * sizeK;
+      // Width is fixed for every tile so columns line up; height is driven by
+      // the image's real aspect ratio (width / height) when known, giving a
+      // masonry look. The aspect is clamped so extreme panoramas / verticals
+      // don't overlap their neighbours. Items without known dimensions fall
+      // back to the fixed cellWidth:cellHeight ratio.
+      const planeW = cfg.cellWidth;
+      let planeH;
+      if (item?.aspect > 0) {
+        const aspect = Math.min(
+          Math.max(item.aspect, cfg.itemAspectMin),
+          cfg.itemAspectMax,
+        );
+        planeH = planeW / aspect;
+      } else {
+        planeH = cfg.cellHeight;
+      }
 
       // Normalised scatter direction [-1, 1].  Stored in userData so that
       // changing cfg.scatter live re-positions items every frame without

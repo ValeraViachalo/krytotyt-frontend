@@ -154,3 +154,26 @@ export const QUERY_HOME_PAGE = `
   }
 }
 `
+
+// Projects feeding the home infinite canvas.
+// Prefer each project's homeImages; fall back to catalog images when none are set.
+// count(homeImages) is null/0 for unset or empty arrays → falls through to catalog.
+export const QUERY_HOME_PROJECTS = `
+*[_type == "projectDetails"]{
+  _id,
+  "name": coalesce(name[$lang], name.ua),
+  "slug": slug.current,
+  "images": select(
+    count(homeImages) > 0 => homeImages[]{
+      "imageUrl": image.asset->url + "?w=800&auto=format",
+      "lqip": image.asset->metadata.lqip,
+      "sizes": image.asset->metadata.dimensions { width, height }
+    },
+    images[showForCatalog == true]{
+      "imageUrl": image.asset->url + "?w=800&auto=format",
+      "lqip": image.asset->metadata.lqip,
+      "sizes": image.asset->metadata.dimensions { width, height }
+    }
+  )
+}
+`

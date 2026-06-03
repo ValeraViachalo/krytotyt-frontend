@@ -7,7 +7,7 @@
  *   import { initInfiniteCanvas } from './InfiniteCanvas.js';
  *
  *   const cleanup = initInfiniteCanvas(containerElement, {
- *     items: [{ image: '/img/foo.jpg', name: 'Foo', slug: '/projects/foo' }],
+ *     items: [{ image: '/img/foo.jpg', name: 'Foo', slug: '/projects/foo', aspect: 1.5 }],
  *     debug: false,
  *   });
  *
@@ -36,7 +36,7 @@ const CANVAS_ZOOM_DEFAULT_STEP_INDEX = 1;
 /**
  * @param {HTMLElement} container
  * @param {Object}      options
- * @param {Array}       options.items       - [{ image, name, slug }]
+ * @param {Array}       options.items       - [{ image, name, slug, aspect? }]  aspect = width/height
  * @param {boolean}     [options.debug]     - Mount debug panel (default false)
  * @param {Object}      [options.settings]  - Override default settings
  * @returns {Function}  cleanup
@@ -214,9 +214,12 @@ function _createState(container, items, overrides) {
       gapX:       80,
       gapY:       80,
 
-      // ── Size variation for organic layout ─────────────────────────────────
-      sizeVariationMin: 0.72,
-      sizeVariationMax: 1.28,
+      // ── Per-item aspect (when the image's real dimensions are known) ───────
+      // Tile height = width / aspect, clamped to this range so extreme
+      // panoramas / verticals don't overlap neighbours. Items without known
+      // dimensions fall back to the fixed cellWidth:cellHeight ratio.
+      itemAspectMin: 0.6,
+      itemAspectMax: 1.9,
 
       // ── Movement ──────────────────────────────────────────────────────────
       driftSpeed:   0.3,    // drift acceleration multiplier (see CameraController)
